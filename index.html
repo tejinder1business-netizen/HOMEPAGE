@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Homepage</title>
+    <style>
+        /* CSS Reset and Background Wall */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            /* Red brick wall texture pattern using CSS */
+            background-color: #9c2a2a;
+            background-image: 
+                linear-gradient(335deg, #7a1f1f 23px, transparent 23px),
+                linear-gradient(155deg, #7a1f1f 23px, transparent 23px),
+                linear-gradient(335deg, #7a1f1f 23px, transparent 23px),
+                linear-gradient(155deg, #7a1f1f 23px, transparent 23px);
+            background-size: 58px 58px;
+            background-position: 0px 2px, 4px 30px, 29px 31px, 34px 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container for content */
+        .container {
+            background-color: rgba(0, 0, 0, 0.75); /* Dark translucent background to make text readable */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Menu Button Styling (Bright Colors) */
+        .button-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: transform 0.2s, filter 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.03);
+            filter: brightness(1.2);
+        }
+
+        /* Bright Button Themes */
+        .btn-green  { background-color: #00e676; color: #000; } /* Neon Green */
+        .btn-yellow { background-color: #ffea00; color: #000; } /* Bright Yellow */
+        .btn-cyan   { background-color: #00e5ff; color: #000; } /* Cyan Blue */
+        .btn-pink   { background-color: #ff007f; color: #fff; } /* Hot Pink */
+
+        /* Back Button */
+        .btn-back {
+            background-color: #555;
+            color: white;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        /* Sub-pages hidden by default */
+        .page {
+            display: none;
+        }
+
+        /* Active class to show a page */
+        .active {
+            display: block;
+        }
+
+        /* Media Layout */
+        .video-container {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        iframe, video {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #fff;
+        }
+
+        .app-list {
+            text-align: left;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home-page" class="container page active">
+        <h1>Welcome</h1>
+        <div class="button-grid">
+            <button class="btn btn-green" onclick="showPage('apps-page')">Free Apps</button>
+            <button class="btn btn-yellow" onclick="showPage('mission-page')">Mission Statement</button>
+            <button class="btn btn-cyan" onclick="showPage('media-page')">Media Page</button>
+            <button class="btn btn-pink" onclick="showPage('support-page')">Support</button>
+        </div>
+    </div>
+
+    <div id="apps-page" class="container page">
+        <h1>Free Apps Available</h1>
+        <div class="app-list">
+            <h3>📱 Awesome App 1</h3>
+            <p>Description of your first app here. Click below to download.</p>
+            <a href="#" class="btn btn-green" style="display:inline-block; font-size:0.9rem; padding:8px 15px;">Download App</a>
+            <hr style="border: 0.5px solid #444; margin: 15px 0;">
+            
+            <h3>📱 Cool App 2</h3>
+            <p>Description of your second app. Available for everyone.</p>
+            <a href="#" class="btn btn-green" style="display:inline-block; font-size:0.9rem; padding:8px 15px;">Download App</a>
+        </div>
+        <button class="btn btn-back" onclick="showPage('home-page')">⬅ Back to Home</button>
+    </div>
+
+    <div id="mission-page" class="container page">
+        <h1>Our Mission Statement</h1>
+        <p style="font-size: 1.2rem; line-height: 1.6; text-align: left;">
+            [Type your mission statement here when you are ready. For now, this placeholder is waiting for your text!]
+        </p>
+        <button class="btn btn-back" onclick="showPage('home-page')">⬅ Back to Home</button>
+    </div>
+
+    <div id="media-page" class="container page">
+        <h1>Promotional Videos</h1>
+        <div class="video-container">
+            <div>
+                <h4>Promotional Video 1</h4>
+                <iframe height="250" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video 1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div>
+                <h4>Promotional Video 2</h4>
+                <iframe height="250" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video 2" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+        <button class="btn btn-back" onclick="showPage('home-page')">⬅ Back to Home</button>
+    </div>
+
+    <div id="support-page" class="container page">
+        <h1>Support</h1>
+        <p>Need help? Reach out to us or check out our resources below.</p>
+        <div class="button-grid">
+            <a href="mailto:support@yourdomain.com" class="btn btn-pink">📧 Email Support</a>
+            <a href="#" class="btn btn-cyan">📄 Frequently Asked Questions</a>
+        </div>
+        <button class="btn btn-back" onclick="showPage('home-page')">⬅ Back to Home</button>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show the selected page
+            document.getElementById(pageId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
