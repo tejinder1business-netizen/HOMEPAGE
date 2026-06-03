@@ -1,0 +1,50 @@
+/* BACKGROUND: Fixed brick wall */
+body {
+    background-image: url('bricks.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    font-family: sans-serif;
+    color: white;
+    text-align: center;
+}
+
+/* THE WALL: Responsive Grid */
+.wall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 25px;
+    padding: 40px;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* APP TILES: The 3D hanging look */
+.app-tile {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: black;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.app-tile:hover {
+    transform: scale(1.05);
+}
+
+/* FOOTER MENU */
+.footer-nav {
+    margin-top: 50px;
+    padding: 20px;
+}
+.footer-nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 0.9em;
+}
