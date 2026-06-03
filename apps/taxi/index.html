@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppWall.ca</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>AppWall.ca</h1>
+    </header>
+
+    <!-- The Wall: Main Sections -->
+    <main class="wall-grid" id="main-wall">
+        <div class="app-tile" style="background: #00FFFF;" onclick="toggleSection('free-apps-section')">Free Apps</div>
+        <div class="app-tile" style="background: #FF00FF;" onclick="alert('Paid Apps Coming Soon!')">Paid Apps</div>
+        <div class="app-tile" style="background: #7FFF00;" onclick="location.href='sandbox.html'">Sandbox</div>
+    </main>
+
+    <!-- Hidden Sub-Section: App Listings -->
+    <section id="free-apps-section" style="display: none; max-width: 600px; margin: 30px auto; padding: 20px; background: rgba(0,0,0,0.85); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
+        <h2 style="color: #00FFFF; margin-top: 0;">Free Apps Directory</h2>
+        
+        <!-- App Row Item -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+            <div style="text-align: left;">
+                <strong style="color: white; font-size: 1.1em; display: block;">🚖 Taxi Companion Pro</strong>
+                <span style="color: #aaa; font-size: 0.85em;">Real-time driver coordination maps</span>
+            </div>
+            <button onclick="location.href='apps/taxi/index.html'" style="padding: 10px 20px; background: #ffd100; color: black; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">
+                Launch App
+            </button>
+        </div>
+
+        <button onclick="toggleSection('free-apps-section')" style="background: none; border: none; color: #ff3b30; font-weight: bold; cursor: pointer; margin-top: 10px;">&larr; Close Wall</button>
+    </section>
+
+    <!-- Hidden Footer Menu -->
+    <nav class="footer-nav">
+        <a href="#mission">Mission</a>
+        <a href="#faq">FAQ</a>
+        <a href="mailto:support@appwall.ca">Support</a>
+    </nav>
+
+    <!-- Script to toggle the sub-sections seamlessly -->
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section.style.display === "none") {
+                section.style.display = "block";
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                section.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
