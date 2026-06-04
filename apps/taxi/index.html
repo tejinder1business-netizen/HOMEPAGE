@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,67 +5,32 @@ HTML
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yellow Cab Companion Pro V10</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+
     <style>
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #111; }
         
         #map { width: 100%; height: 100%; position: absolute; top: 0; bottom: 0; z-index: 1; }
         
-        /* Dynamic Auto-Hiding Zoom Control Box Wrapper Placement Rules */
-        .dynamic-zoom-container {
-            position: absolute;
-            top: 115px; /* Safely nested between Police Button and Right Utility Circle */
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s ease-in-out;
-        }
-        .dynamic-zoom-container.zoom-visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .custom-zoom-btn {
-            width: 50px;
-            height: 50px;
-            background: #ffffff;
-            border: 3px solid #1c1c1e;
-            color: #1c1c1e;
-            font-size: 1.8rem;
-            font-weight: 900;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .custom-zoom-btn:active {
-            background: #ffd100;
-        }
+        .dynamic-zoom-container { position: absolute; top: 115px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease-in-out; }
+        .dynamic-zoom-container.zoom-visible { opacity: 1; pointer-events: auto; }
+        .custom-zoom-btn { width: 50px; height: 50px; background: #ffffff; border: 3px solid #1c1c1e; color: #1c1c1e; font-size: 1.8rem; font-weight: 900; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
+        .custom-zoom-btn:active { background: #ffd100; }
 
-        /* Top HUD Action Buttons - Repositioned to Corners */
         .top-actions { position: absolute; top: 20px; left: 0; right: 0; padding: 0 20px; display: flex; justify-content: space-between; z-index: 1000; pointer-events: none; }
         .action-btn { pointer-events: auto; width: 82px; height: 82px; border-radius: 50%; border: 4px solid #fff; color: white; font-weight: bold; font-size: 0.82rem; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .btn-flag { background: #ff3b30; }
         .btn-police { background: #007aff; }
         .action-btn span { font-size: 0.62rem; margin-top: 2px; display: block; line-height: 1.1; font-weight: 900; } 
 
-        /* Bottom HUD Menu Trigger Button */
         .bottom-actions { position: absolute; bottom: 30px; left: 20px; z-index: 1000; }
         .btn-main-menu { background: #444446; color: white; border-color: #fff; }
 
-        /* Middle Side Utility Buttons */
         .side-util { position: absolute; z-index: 1000; display: flex; flex-direction: column; gap: 20px; }
         .left-side { left: 15px; top: 50%; transform: translateY(-50%); }
-        
-        /* Repositioned Map Lock to precise center right layout */
         .right-side-center { right: 15px; top: 50%; transform: translateY(-50%); position: absolute; z-index: 1000; }
-        
-        /* Repositioned Yellow Profile Button to extreme bottom right layout */
         .right-side-bottom { right: 15px; bottom: 30px; position: absolute; z-index: 1000; }
 
         .util-circle { width: 70px; height: 70px; border-radius: 50%; background: #ffffff; border: 3px solid #1c1c1e; color: #1c1c1e; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; text-align: center; }
@@ -74,40 +38,31 @@ HTML
         .util-circle.active-center { background: #34c759; color: white; border-color: white; } 
         .util-circle.profile-hud-btn { background: #ffd100; color: #1c1c1e; border-color: #1c1c1e; }
 
-        /* Custom Pure CSS Taxi Moving Element */
         .taxi-vector-icon { background: #ffd100; border: 2px solid #000; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.4); text-align: center; font-weight: bold; font-size: 9px; line-height: 24px; color: black; font-family: monospace; padding: 0 2px; white-space: nowrap; }
         .taxi-vector-icon::after { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 10px; height: 4px; background: black; border-radius: 1px; } 
 
-        /* Custom Drop Markers - SOLID COLORS */
         .red-man-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6)); }
         .police-officer-icon { font-size: 36px; text-align: center; line-height: 36px; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.6)); }
         
-        /* DYNAMIC CAUTION MARKER ICONS */
         .caution-traffic-icon { font-size: 26px; text-align: center; line-height: 26px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6)); white-space: nowrap; }
         .caution-accident-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6)); }
         .caution-closure-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6)); }
         
-        /* Driving Selection Popups - SOLID WHITE BACKGROUND FOUNDATIONS */
         .driver-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 22px; border-radius: 16px; z-index: 2000; box-shadow: 0 14px 40px rgba(0,0,0,0.5); background: #ffffff !important; border: 4px solid #1c1c1e; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 1999; }
         
         .modal-title { font-size: 1.15rem; font-weight: 900; margin-bottom: 16px; text-align: center; display: block; border-bottom: 2px solid #e5e5ea; padding-bottom: 8px; color: #1c1c1e; text-transform: uppercase; letter-spacing: 0.5px; }
         .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         
-        /* Options Direct Layout & Bold Typography Assertions */
         .grid-options button { font-weight: 900 !important; font-size: 1.12rem; padding: 18px 10px; border-radius: 12px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .grid-options button:active { filter: brightness(0.85); }
         .full-width-btn { grid-column: span 2; } 
 
-        /* SOLID COLOR BUTTON THEMES */
         .flag-grid { width: 345px; max-height: 90vh; overflow-y: auto; }
         .btn-flag-cardinal { background: #ff3b30 !important; color: #ffffff !important; border: 3px solid #ff3b30; }
         .btn-flag-corner { background: #34c759 !important; color: #ffffff !important; border: 3px solid #34c759; } 
-        
-        /* Hotel Button Style Assertion */
         .btn-flag-hotel { grid-column: span 2; background: #5856d6 !important; color: #ffffff !important; border: 3px solid #5856d6; }
 
-        /* BRIGHT THEMED UTILITY PANEL MENU BUTTONS */
         .utility-menu-grid { width: 340px; max-height: 90vh; overflow-y: auto; }
         .btn-caution-menu { background: #ffcc00 !important; color: #000000 !important; border: 3px solid #e6b800 !important; font-weight: 900 !important; }
         .btn-cameras-menu { background: #34c759 !important; color: #ffffff !important; border: 3px solid #28a745 !important; }
@@ -117,57 +72,36 @@ HTML
         .btn-admin-menu { background: #8e8e93 !important; color: #ffffff !important; border: 3px solid #636366 !important; }
         .btn-matching-menu { background: #af52de !important; color: #ffffff !important; border: 3px solid #923cb8 !important; }
 
-        /* Caution Menu Styles (Solid Yellow) */
         .caution-grid { width: 310px; }
         .btn-caution-opt { background: #ffcc00 !important; color: #000000 !important; border: 3px solid #ffcc00; } 
-
-        /* Police Menu Styles (Solid Blue) */
         .police-grid { width: 300px; }
         .btn-police-opt { background: #007aff !important; color: #ffffff !important; border: 3px solid #007aff; } 
 
-        /* STREET VIEW CAMERAS OVERLAY MODAL WINDOW */
         .cam-list-grid { width: 350px; max-height: 85vh; overflow-y: auto; }
-        
-        .btn-camera-select { 
-            background: #34c759 !important; 
-            color: #ffffff !important; 
-            border: 3px solid #248a3d !important; 
-            text-align: left; 
-            padding: 14px 12px !important; 
-            font-size: 0.95rem !important; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-        }
+        .btn-camera-select { background: #34c759 !important; color: #ffffff !important; border: 3px solid #248a3d !important; text-align: left; padding: 14px 12px !important; font-size: 0.95rem !important; display: flex; align-items: center; justify-content: space-between; }
         .btn-close-cam { background: #1c1c1e; color: white; width: 100%; margin-top: 12px; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 1rem; border: none; cursor: pointer; text-transform: uppercase; } 
 
-        /* SUGGESTION BOX WINDOW STYLES */
         .suggestion-grid { width: 320px; }
         .suggestion-input { width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 2px solid #a2a2a6; font-size: 1rem; resize: none; margin-bottom: 14px; font-family: inherit; }
         .suggestion-input:focus { border-color: #007aff; outline: none; }
         .btn-submit-sugg { background: #007aff; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
         .btn-cancel-sugg { background: #e5e5ea; color: #1c1c1e; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: 900; font-size: 0.95rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
 
-        /* CHAT LOG HISTORY WINDOW STYLES - FIXED TO MAINTAIN SOLID ALL-THE-TIME SYSTEM THEME COLORS */
         .chat-log-grid { width: 360px; max-height: 80vh; display: flex; flex-direction: column; padding: 16px; }
         .chat-tab-bar { display: flex; gap: 6px; margin-bottom: 12px; }
         .chat-tab-btn { flex: 1; padding: 12px 4px; font-weight: 900; font-size: 0.85rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; text-align: center; border: 2px solid transparent; }
-        
         #tab-btn-flag { background: #ff3b30 !important; color: white !important; opacity: 0.6; }
         #tab-btn-caution { background: #ffcc00 !important; color: black !important; opacity: 0.6; }
         #tab-btn-police { background: #007aff !important; color: white !important; opacity: 0.6; }
-        
         #tab-btn-flag.active-tab-flags { border-color: #1c1c1e !important; box-shadow: inset 0 0 0 2px #fff; opacity: 1.0; }
         #tab-btn-caution.active-tab-caution { border-color: #1c1c1e !important; box-shadow: inset 0 0 0 2px #000; opacity: 1.0; }
         #tab-btn-police.active-tab-police { border-color: #1c1c1e !important; box-shadow: inset 0 0 0 2px #fff; opacity: 1.0; }
-        
         .chat-list-container { flex: 1; overflow-y: auto; min-height: 200px; max-height: 45vh; border: 2px solid #e5e5ea; border-radius: 8px; padding: 6px; background: #f2f2f7; }
         .chat-log-item { background: #ffffff; border: 2px solid #d1d1d6; border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; font-size: 0.95rem; line-height: 1.4; color: #1c1c1e; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .chat-log-item:active { background: #e5e5ea; }
         .chat-log-item span.time-badge { font-size: 0.72rem; color: #8e8e93; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; }
         .chat-empty-msg { text-align: center; color: #8e8e93; font-weight: bold; font-size: 0.95rem; padding-top: 40px; text-transform: uppercase; }
 
-        /* PROFILE AND SHIFT SCHEDULER POPUP STYLES */
         .shift-modal-grid { width: 345px; max-height: 95vh; overflow-y: auto; }
         .profile-input-field { width: 100%; padding: 10px; font-size: 1rem; font-weight: 700; border-radius: 8px; border: 2px solid #1c1c1e; margin: 6px 0 12px 0; font-family: inherit; background: #f2f2f7; }
         .profile-select-field { width: 100%; padding: 10px; font-size: 1rem; font-weight: 900; border-radius: 8px; border: 2px solid #1c1c1e; margin: 6px 0 12px 0; font-family: inherit; background: #ffd100; color: #000; }
@@ -175,13 +109,11 @@ HTML
         .btn-confirm-shift { background: #34c759; color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 900; font-size: 1.2rem; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .profile-field-label { text-align: left; font-weight: 900; color: #1c1c1e; font-size: 0.85rem; text-transform: uppercase; display: block; }
         
-        /* ADMIN PANEL INTERFACE DESIGN */
         .admin-grid { width: 330px; }
         .admin-status-card { background: #f2f2f7; border: 2px solid #d1d1d6; border-radius: 10px; padding: 12px; margin-bottom: 14px; font-size: 0.9rem; color: #1c1c1e; }
         .btn-suspend-opt { background: #ff3b30 !important; color: #ffffff !important; border: 3px solid #ff3b30; }
         .btn-unsuspend-opt { background: #34c759 !important; color: #ffffff !important; border: 3px solid #34c759; }
 
-        /* BLACKOUT SCREEN SIGN OFF STATUS OVERLAY */
         #shift-complete-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111111; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .complete-card { background: #ffffff; border: 5px solid #ffd100; border-radius: 24px; padding: 35px 25px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .complete-icon { font-size: 4rem; margin-bottom: 15px; }
@@ -189,7 +121,6 @@ HTML
         .complete-desc { font-size: 1.1rem; color: #48484a; font-weight: bold; line-height: 1.4; margin-bottom: 25px; }
         .btn-restart-app { background: #1c1c1e; color: #ffd100; border: 3px solid #ffd100; padding: 14px 28px; font-weight: 900; font-size: 1.1rem; border-radius: 10px; cursor: pointer; text-transform: uppercase; }
 
-        /* NEW DRIVER MATCHING ENGINE GRAPHICAL INTERFACE WORKSPACE */
         .matching-grid { width: 375px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; padding: 16px; }
         .match-card-info { background: #f2f2f7; border: 2px solid #af52de; border-radius: 10px; padding: 10px; font-size: 0.85rem; color: #1c1c1e; margin-bottom: 12px; font-weight: 700; }
         .match-input-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: space-between; }
@@ -198,7 +129,6 @@ HTML
         .match-select-shift { padding: 8px; border: 2px solid #1c1c1e; border-radius: 6px; font-weight: 900; font-family: inherit; background: #fff; font-size: 0.9rem; }
         .btn-log-availability { background: #af52de; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 14px; width: 100%; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
         
-        /* Redesigned Dual List Columns Layout Frameworks */
         .dual-list-layout-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
         .match-column-container { display: flex; flex-direction: column; }
         .match-list-heading { font-size: 0.78rem; font-weight: 900; color: #1c1c1e; text-transform: uppercase; border-bottom: 2px solid #af52de; padding-bottom: 4px; margin-bottom: 8px; text-align: left; letter-spacing: -0.3px; }
@@ -296,6 +226,8 @@ HTML
             <button class="btn-logs-menu full-width-btn" onclick="openChatLogHistoryMenuFromMenu()">💬 LOG BOOK</button>
             <button class="btn-feedback-menu full-width-btn" onclick="openFeedbackFromMenu()">📝 DRIVER FEEDBACK</button>
             <button class="btn-admin-menu full-width-btn" onclick="accessAdminControlPortal()">🔑 ADMIN PORTAL</button>
+            
+            <button id="pwa-install-btn" class="btn-cameras-menu full-width-btn" style="display:none; background:#00ffff!important; color:#000!important;" onclick="triggerPwaInstall()">📲 INSTALL PWA APP</button>
         </div>
         <button class="btn-close-cam" onclick="hideModals()">Close Menu</button>
     </div>
@@ -468,14 +400,12 @@ HTML
         let audioMuted = false;
         let wakeLockToken = null;
         
-        // PERSISTENT MANUAL DRIVER ZOOM PREFERENCE
         let preferredZoomDepth = 17; 
         let zoomVisibilityTimeout = null;
 
-        // GLOBAL WEBSOCKET CONNECTION INSTANCE TRACKER
-        let globalSocketInstance = null;
+        // NEW MQTT CLIENT VAR
+        let mqttClient = null;
 
-        // GLOBAL ALL-TIME PERSISTENT COMPANY DIRECTORY CACHE
         let activeCompanyRegistry = [
             "Yellow Cab Company Private Limited",
             "Black Top Cabs",
@@ -483,58 +413,37 @@ HTML
             "Vancouver Taxi"
         ];
 
-        // PROFILE REGISTRATION AND ACTIVE IDENTITY MEMORY
         let driverProfileMemory = {
-            uid: "",
-            company: "Yellow Cab Company Private Limited",
-            carNumber: "342",
-            displayName: "Jaswell",
-            isSuspended: false,
-            role: "Driver",
-            phoneNumber: ""
+            uid: "", company: "Yellow Cab Company Private Limited", carNumber: "342",
+            displayName: "Jaswell", isSuspended: false, role: "Driver", phoneNumber: ""
         };
 
-        // TRACKS IF A BASE ANCHOR PROFILE RECORD ALREADY EXISTS
         let isProfileDataAnchored = false;
 
-        // NEW GLOBAL STORAGE CACHE SIMULATING DISPATCH MATCH POOL FEED
         let mockSharedMatchingPool = [
             { id: "M-1", name: "Paul S.", role: "Driver", company: "Yellow Cab Company Private Limited", carNumber: "N/A", date: "2026-06-01", shift: "Day Shift", phone: "604-555-9876" },
-            { id: "M-2", name: "M. Pabla", role: "Owner", company: "Yellow Cab Company Private Limited", carNumber: "154", date: "2026-06-02", shift: "Night Shift", phone: "778-555-1234" },
-            { id: "M-3", name: "David K.", role: "Driver", company: "Yellow Cab Company Private Limited", carNumber: "N/A", date: "2026-05-26", shift: "Day Shift", phone: "604-555-4321" },
-            { id: "M-4", name: "S. Dhillon", role: "Owner", company: "Yellow Cab Company Private Limited", carNumber: "210", date: "2026-05-26", shift: "Day Shift", phone: "778-555-8899" },
-            { id: "M-5", name: "John Doe", role: "Driver", company: "Black Top Cabs", carNumber: "N/A", date: "2026-05-26", shift: "Day Shift", phone: "604-555-0000" }
+            { id: "M-2", name: "M. Pabla", role: "Owner", company: "Yellow Cab Company Private Limited", carNumber: "154", date: "2026-06-02", shift: "Night Shift", phone: "778-555-1234" }
         ];
 
-        // Map Core Initialization
         const map = L.map('map', { 
-            zoomControl: false, 
-            maxZoom: 18,
-            dragging: true,
-            touchZoom: true,
-            doubleClickZoom: true,
-            scrollWheelZoom: true
+            zoomControl: false, maxZoom: 18, dragging: true, touchZoom: true,
+            doubleClickZoom: true, scrollWheelZoom: true
         }).setView([49.2611, -123.1281], preferredZoomDepth); 
         
-        // High-visibility bright street tiles
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '© OpenStreetMap © CARTO'
         }).addTo(map); 
 
         let chosenCautionType = "";
         let chosenPoliceType = "radar"; 
-
         let currentAddressData = { houseNumber: "", streetName: "Unknown Street", isLoaded: false }; 
         let lastSpokenSpeechString = "";
-
         let activeMarkersLog = [];
         let activeChatLogTab = "Flag";
-
         let targetShiftEndTimestamp = null;
         let shiftMonitoringInterval = null;
         let isShiftActive = false;
 
-        // Dynamic Moving Taxi Label Construction Logic
         function generateDynamicTaxiIcon() {
             let markerLabel = "TAXI";
             const currentCompany = driverProfileMemory.company.toLowerCase();
@@ -559,22 +468,17 @@ HTML
             });
         }
 
-        // POPULATES BOTH DROPDOWN INTERFACE SCHEMES SYNCHRONOUSLY
         function syncCompanyDropdownUIFields() {
             const profileSelect = document.getElementById('driver-company-select');
             const matchSelect = document.getElementById('match-company-target-select');
             
             let profileOptionsHtml = "";
-            activeCompanyRegistry.forEach(comp => {
-                profileOptionsHtml += `<option value="${comp}">${comp}</option>`;
-            });
+            activeCompanyRegistry.forEach(comp => { profileOptionsHtml += `<option value="${comp}">${comp}</option>`; });
             profileOptionsHtml += `<option value="__ADD_NEW_COMPANY__">[ + Add Custom Fleet Company ]</option>`;
             profileSelect.innerHTML = profileOptionsHtml;
             
             let matchOptionsHtml = "";
-            activeCompanyRegistry.forEach(comp => {
-                matchOptionsHtml += `<option value="${comp}">${comp}</option>`;
-            });
+            activeCompanyRegistry.forEach(comp => { matchOptionsHtml += `<option value="${comp}">${comp}</option>`; });
             matchSelect.innerHTML = matchOptionsHtml;
         }
 
@@ -583,9 +487,7 @@ HTML
                 const customFirmName = prompt("ENTER FORMAL REGISTERED NAME FOR YOUR NEW TAXI COMPANY:");
                 if (customFirmName && customFirmName.trim() !== "") {
                     const cleanedName = customFirmName.trim();
-                    if (!activeCompanyRegistry.includes(cleanedName)) {
-                        activeCompanyRegistry.push(cleanedName);
-                    }
+                    if (!activeCompanyRegistry.includes(cleanedName)) { activeCompanyRegistry.push(cleanedName); }
                     syncCompanyDropdownUIFields();
                     selectElement.value = cleanedName;
                 } else {
@@ -594,10 +496,9 @@ HTML
             }
         }
 
-        // --- NEW: AUTO START FUNCTION FOR DIRECT MAP ACCESS ---
         function autoStartDefaultShift() {
             const now = new Date();
-            now.setHours(now.getHours() + 12); // Default 12 hour hidden shift
+            now.setHours(now.getHours() + 12);
             targetShiftEndTimestamp = now.getTime();
             isShiftActive = true;
             driverProfileMemory.isSuspended = false;
@@ -610,7 +511,7 @@ HTML
             shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
 
             updateHudProfileTriggerButtonLabel();
-            initializeWebSocketConnection(); // Start the live websocket sync immediately
+            initializeWebSocketConnection(); 
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -639,11 +540,9 @@ HTML
             
             updateHudProfileTriggerButtonLabel();
             
-            // --- CHANGED: Hide the overlay and modal by default ---
             document.getElementById('screen-overlay').style.display = 'none';
             document.getElementById('shift-scheduler-pop').style.display = 'none';
 
-            // --- CHANGED: Automatically start the shift so the map/buttons work immediately ---
             autoStartDefaultShift();
         });
 
@@ -661,7 +560,6 @@ HTML
         function toggleProfileModalFieldsDisplay(isAnchored) {
             const fieldsWrapper = document.getElementById('profile-setup-fields-wrapper');
             const identityHud = document.getElementById('profile-saved-identity-hud');
-            
             if (isAnchored) {
                 fieldsWrapper.style.display = 'none';
                 identityHud.style.display = 'block';
@@ -675,24 +573,19 @@ HTML
 
         function openFullProfileSettings() {
             if (driverProfileMemory.isSuspended) return;
-            
             document.getElementById('profile-modal-main-title').innerText = "Edit Profile Settings";
             syncCompanyDropdownUIFields();
-            
             document.getElementById('driver-company-select').value = driverProfileMemory.company;
             document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
             document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
             document.getElementById('driver-role-select').value = driverProfileMemory.role;
             document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
-            
             document.getElementById('profile-setup-fields-wrapper').style.display = 'block';
             document.getElementById('profile-saved-identity-hud').style.display = 'none';
             document.getElementById('shift-end-time-picker-section').style.display = 'none';
-            
             const submitBtn = document.getElementById('profile-submit-action-btn');
             submitBtn.innerText = "Save Adjustments";
             submitBtn.setAttribute('onclick', 'saveProfileAdjustmentsDirectly()');
-            
             document.getElementById('profile-close-action-btn').style.display = 'block';
             showModal('shift-scheduler-pop');
         }
@@ -708,12 +601,9 @@ HTML
             const nameVal = document.getElementById('driver-name-input').value.trim();
             const roleVal = document.getElementById('driver-role-select').value;
             const phoneVal = document.getElementById('driver-phone-input').value.trim();
-            
             if (!companyVal || companyVal === "__ADD_NEW_COMPANY__" || !carVal || !nameVal) {
-                alert("ALL PROFILE INFORMATION FIELDS ARE MANDATORY TO SECURE DRIVER ANCHOR IDENTITY.");
-                return;
+                alert("ALL PROFILE INFORMATION FIELDS ARE MANDATORY."); return;
             }
-
             driverProfileMemory.company = companyVal;
             driverProfileMemory.carNumber = carVal;
             driverProfileMemory.displayName = nameVal;
@@ -722,45 +612,31 @@ HTML
             document.getElementById('match-company-target-select').value = companyVal;
             isProfileDataAnchored = true;
             updateHudProfileTriggerButtonLabel();
-
             if (vehicleMarker && vehiclePos) {
                 map.removeLayer(vehicleMarker);
                 vehicleMarker = L.marker(vehiclePos, { icon: generateDynamicTaxiIcon() }).addTo(map);
             }
-
             hideModals();
-            alert("SUCCESS: Your profile registry identity configurations have been live adjusted!");
         }
 
         function showZoomControlsTemporarily() {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
             const zoomBox = document.getElementById('dynamic-zoom-box');
             zoomBox.classList.add('zoom-visible');
-            
             clearTimeout(zoomVisibilityTimeout);
-            zoomVisibilityTimeout = setTimeout(() => {
-                zoomBox.classList.remove('zoom-visible');
-            }, 4000);
+            zoomVisibilityTimeout = setTimeout(() => { zoomBox.classList.remove('zoom-visible'); }, 4000);
         }
 
         function executeManualZoomAction(direction) {
             showZoomControlsTemporarily();
-            let currentZoom = map.getZoom();
-            let targetZoom = currentZoom + direction;
-            
+            let targetZoom = map.getZoom() + direction;
             if (targetZoom >= map.getMinZoom() && targetZoom <= map.getMaxZoom()) {
-                preferredZoomDepth = targetZoom;
-                map.setZoom(targetZoom);
+                preferredZoomDepth = targetZoom; map.setZoom(targetZoom);
             }
         }
 
-        map.on('zoomstart touchmove movestart pinchstart', function() {
-            showZoomControlsTemporarily();
-        });
-
-        map.on('zoomend', function() {
-            preferredZoomDepth = map.getZoom();
-        });
+        map.on('zoomstart touchmove movestart pinchstart', function() { showZoomControlsTemporarily(); });
+        map.on('zoomend', function() { preferredZoomDepth = map.getZoom(); });
 
         function initializeDriverShiftTimer() {
             if (!isProfileDataAnchored) {
@@ -769,38 +645,21 @@ HTML
                 const nameVal = document.getElementById('driver-name-input').value.trim();
                 const roleVal = document.getElementById('driver-role-select').value;
                 const phoneVal = document.getElementById('driver-phone-input').value.trim();
-                
-                if (!companyVal || companyVal === "__ADD_NEW_COMPANY__" || !carVal || !nameVal) {
-                    alert("ALL PROFILE INFORMATION FIELDS ARE MANDATORY TO SECURE DRIVER ANCHOR IDENTITY.");
-                    return;
-                }
-
-                driverProfileMemory.company = companyVal;
-                driverProfileMemory.carNumber = carVal;
-                driverProfileMemory.displayName = nameVal;
-                driverProfileMemory.role = roleVal;
-                driverProfileMemory.phoneNumber = phoneVal;
-                document.getElementById('match-company-target-select').value = companyVal;
+                if (!companyVal || companyVal === "__ADD_NEW_COMPANY__" || !carVal || !nameVal) { alert("ALL PROFILE INFORMATION FIELDS ARE MANDATORY."); return; }
+                driverProfileMemory.company = companyVal; driverProfileMemory.carNumber = carVal;
+                driverProfileMemory.displayName = nameVal; driverProfileMemory.role = roleVal;
+                driverProfileMemory.phoneNumber = phoneVal; document.getElementById('match-company-target-select').value = companyVal;
                 isProfileDataAnchored = true;
             }
 
             const timeInputValue = document.getElementById('shift-end-time-input').value;
-            if (!timeInputValue) {
-                alert("PLEASE SELECT A VALID SHIFT END TIME.");
-                return;
-            }
-
-            if (!driverProfileMemory.uid) {
-                driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000);
-            }
+            if (!timeInputValue) { alert("PLEASE SELECT A VALID SHIFT END TIME."); return; }
+            if (!driverProfileMemory.uid) { driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000); }
 
             const [hours, minutes] = timeInputValue.split(':').map(Number);
             const now = new Date();
             let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-
-            if (targetDate <= now) {
-                targetDate.setDate(targetDate.getDate() + 1);
-            }
+            if (targetDate <= now) { targetDate.setDate(targetDate.getDate() + 1); }
 
             targetShiftEndTimestamp = targetDate.getTime();
             isShiftActive = true;
@@ -817,50 +676,37 @@ HTML
             }
 
             initializeWebSocketConnection();
-
             document.getElementById('shift-scheduler-pop').style.display = 'none';
             document.getElementById('screen-overlay').style.display = 'none';
         }
 
         function checkShiftTimeExpirationStatus() {
             if (!isShiftActive || !targetShiftEndTimestamp) return;
-
-            const currentTimestamp = Date.now();
-            if (currentTimestamp >= targetShiftEndTimestamp) {
-                shutDownActiveAppSession();
-            }
+            if (Date.now() >= targetShiftEndTimestamp) { shutDownActiveAppSession(); }
         }
 
         function shutDownActiveAppSession() {
             isShiftActive = false;
             if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
-            
             audioMuted = true;
             const btn = document.getElementById('mute-toggle-btn');
-            if (btn) {
-                btn.className = "util-circle active-mute";
-                btn.innerHTML = "AUDIO<br>MUTED";
-            }
-
+            if (btn) { btn.className = "util-circle active-mute"; btn.innerHTML = "AUDIO<br>MUTED"; }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
-
-            if (globalSocketInstance) {
-                globalSocketInstance.close();
-                globalSocketInstance = null;
+            
+            // NEW: Shut down MQTT cleanly
+            if (mqttClient) {
+                mqttClient.disconnect();
+                mqttClient = null;
             }
 
             hideModals();
             trackVehicleView = false;
             document.getElementById('dynamic-zoom-box').classList.remove('zoom-visible');
-
             document.getElementById('status-screen-emoji').innerText = "🏁";
             document.getElementById('status-screen-heading').innerText = "Shift Completed";
             document.getElementById('status-screen-body').innerText = "You have been signed off. The application is shut down and all audio updates are disabled. Have a safe drive home!";
-            
             const restartBtn = document.getElementById('status-screen-btn');
-            restartBtn.style.display = "block";
-            restartBtn.innerText = "Start New Shift";
-
+            restartBtn.style.display = "block"; restartBtn.innerText = "Start New Shift";
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
 
@@ -868,91 +714,85 @@ HTML
             document.getElementById('shift-complete-screen').style.display = 'none';
             audioMuted = false;
             const btn = document.getElementById('mute-toggle-btn');
-            if (btn) {
-                btn.className = "util-circle";
-                btn.innerHTML = "AUDIO<br>ON";
-            }
-            
+            if (btn) { btn.className = "util-circle"; btn.innerHTML = "AUDIO<br>ON"; }
             document.getElementById('profile-modal-main-title').innerText = "Driver Profile Setup";
             document.getElementById('shift-end-time-picker-section').style.display = 'block';
-            
             const submitBtn = document.getElementById('profile-submit-action-btn');
             submitBtn.innerText = "Go On Duty";
             submitBtn.setAttribute('onclick', 'initializeDriverShiftTimer()');
-            
             document.getElementById('profile-close-action-btn').style.display = 'none';
             toggleProfileModalFieldsDisplay(isProfileDataAnchored);
-            
             document.getElementById('screen-overlay').style.display = 'block';
             document.getElementById('shift-scheduler-pop').style.display = 'block';
         }
 
         // =========================================================================================
-        // REAL-TIME WEBSOCKET DATA SYNC ENGINE (DATA-MINIFIED)
+        // NEW HIVE-MQ NETWORKING ENGINE (Replaces old PieSocket WebSockets)
         // =========================================================================================
         function initializeWebSocketConnection() {
-            if (globalSocketInstance && globalSocketInstance.readyState === WebSocket.OPEN) return;
+            if (mqttClient && mqttClient.isConnected()) return;
 
-            // Note: This is a public PieSocket sandbox channel. It may occasionally reset if overloaded.
-            const sharedChannelUri = "wss://free.piesocket.com/v3/vancouver_cab_companion_pro?api_key=VCcp7V10_SandboxBrokerKey_NoAuthRequired";
+            // Generate a unique client ID for this connection
+            const clientId = "drv_" + (driverProfileMemory.uid || Math.random().toString(16).slice(2, 10));
             
-            try {
-                globalSocketInstance = new WebSocket(sharedChannelUri);
+            // Connect to public HiveMQ WebSocket server
+            mqttClient = new Paho.MQTT.Client("broker.hivemq.com", Number(8884), "/mqtt", clientId);
 
-                globalSocketInstance.onmessage = function(event) {
-                    try {
-                        // The payload is minified heavily to keep your data usage incredibly small
-                        const minPayload = JSON.parse(event.data);
-                        
-                        if (minPayload.u === driverProfileMemory.uid) return;
-                        
-                        // Expand the minified payload back out into usable data
-                        const incomingPackage = {
-                            senderUid: minPayload.u,
-                            category: minPayload.c,
-                            subType: minPayload.s,
-                            coordinates: [minPayload.x, minPayload.y],
-                            address: minPayload.a,
-                            textString: minPayload.t,
-                            dir: minPayload.d
-                        };
-                        
-                        handleRemoteMarkerInjection(incomingPackage);
-                    } catch (err) {
-                        console.log("Network buffer ingestion error: " + err.message);
-                    }
-                };
+            mqttClient.onConnectionLost = function(responseObject) {
+                if (isShiftActive && !driverProfileMemory.isSuspended) {
+                    setTimeout(initializeWebSocketConnection, 5000);
+                }
+            };
 
-                globalSocketInstance.onerror = function() {
-                    console.log("WebSocket connection encountered a temporary error state.");
-                };
+            mqttClient.onMessageArrived = function(message) {
+                try {
+                    const minPayload = JSON.parse(message.payloadString);
+                    
+                    if (minPayload.u === driverProfileMemory.uid) return; // Ignore our own messages
+                    
+                    const incomingPackage = {
+                        senderUid: minPayload.u,
+                        category: minPayload.c,
+                        subType: minPayload.s,
+                        coordinates: [minPayload.x, minPayload.y],
+                        address: minPayload.a,
+                        textString: minPayload.t,
+                        dir: minPayload.d
+                    };
+                    
+                    handleRemoteMarkerInjection(incomingPackage);
+                } catch (err) {}
+            };
 
-                globalSocketInstance.onclose = function() {
-                    if (isShiftActive && !driverProfileMemory.isSuspended) {
-                        setTimeout(initializeWebSocketConnection, 5000);
-                    }
-                };
-            } catch (e) {
-                console.log("WebSocket engine initialization failure: " + e.message);
-            }
+            mqttClient.connect({
+                useSSL: true,
+                onSuccess: function() {
+                    // Subscribe to a shared companion app channel
+                    mqttClient.subscribe("appwall/taxi/network");
+                },
+                onFailure: function(e) {
+                    setTimeout(initializeWebSocketConnection, 5000);
+                }
+            });
         }
 
         function broadcastPayloadToPeerDevices(payloadObject) {
-            if (!globalSocketInstance || globalSocketInstance.readyState !== WebSocket.OPEN) return;
+            if (!mqttClient || !mqttClient.isConnected()) return;
             
-            // --- NEW: MINIFIED PAYLOAD TO KEEP DATA LOAD AT ABSOLUTE LOWEST POINT ---
             const minifiedPayload = {
-                u: driverProfileMemory.uid,           // User ID
-                c: payloadObject.category,            // Category
-                s: payloadObject.subType,             // SubType
-                x: payloadObject.coordinates[0],      // Lat
-                y: payloadObject.coordinates[1],      // Lng
-                a: payloadObject.address,             // Address
-                t: payloadObject.textString,          // Text String
-                d: payloadObject.dir || ""            // Direction
+                u: driverProfileMemory.uid,
+                c: payloadObject.category,
+                s: payloadObject.subType,
+                x: payloadObject.coordinates[0],
+                y: payloadObject.coordinates[1],
+                a: payloadObject.address,
+                t: payloadObject.textString,
+                d: payloadObject.dir || ""
             };
             
-            globalSocketInstance.send(JSON.stringify(minifiedPayload));
+            const message = new Paho.MQTT.Message(JSON.stringify(minifiedPayload));
+            message.destinationName = "appwall/taxi/network";
+            mqttClient.send(message);
         }
 
         function handleRemoteMarkerInjection(data) {
@@ -961,27 +801,12 @@ HTML
             const incomingPos = L.latLng(data.coordinates[0], data.coordinates[1]);
 
             if (data.category === 'Flag') {
-                const redManIcon = L.divIcon({
-                    className: 'red-man-icon',
-                    html: data.subType === 'Hotel Driveway' ? '🏨' : '🚶',
-                    iconSize: [34, 34],
-                    iconAnchor: [17, 32]
-                });
-
+                const redManIcon = L.divIcon({ className: 'red-man-icon', html: data.subType === 'Hotel Driveway' ? '🏨' : '🚶', iconSize: [34, 34], iconAnchor: [17, 32] });
                 const flagMarker = L.marker(incomingPos, { icon: redManIcon }).addTo(map);
                 let headerLabel = `<strong style="color:#ff3b30;">FLAG WAITING</strong>`;
-                if (data.subType === 'Hotel Driveway') {
-                    headerLabel = `<strong style="color:#5856d6;">HOTEL DISPATCH FLAG</strong>`;
-                }
+                if (data.subType === 'Hotel Driveway') { headerLabel = `<strong style="color:#5856d6;">HOTEL DISPATCH FLAG</strong>`; }
 
-                activeMarkersLog.push({
-                    category: 'Flag',
-                    timestamp: Date.now(),
-                    latlng: incomingPos,
-                    textString: data.textString,
-                    emojiIcon: data.subType === 'Hotel Driveway' ? '🏨' : '🚶',
-                    subType: data.subType
-                });
+                activeMarkersLog.push({ category: 'Flag', timestamp: Date.now(), latlng: incomingPos, textString: data.textString, emojiIcon: data.subType === 'Hotel Driveway' ? '🏨' : '🚶', subType: data.subType });
 
                 const navigationUrl = `https://www.google.com/maps/search/?api=1&query=${incomingPos.lat},${incomingPos.lng}`;
                 flagMarker.bindPopup(`
@@ -990,302 +815,142 @@ HTML
                     <span>Location: ${data.address}</span><br><br>
                     <a href="${navigationUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a>
                 `);
-
                 dispatchRemoteAudioNarration(data.category, data.subType, data.address);
-
                 setTimeout(() => { map.removeLayer(flagMarker); }, 300000);
             }
             else if (data.category === 'Caution') {
-                let cautionIconHtml = "🚧";
-                let classLabel = "caution-closure-icon";
-                let anchorOffsets = [15, 15];
-                let customSize = [30, 30];
-
-                if (data.subType === 'Mild traffic') {
-                    cautionIconHtml = "🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [50, 26]; anchorOffsets = [25, 13];
-                } else if (data.subType === 'Heavy traffic') {
-                    cautionIconHtml = "🚘🚘🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [90, 26]; anchorOffsets = [45, 13];
-                } else if (data.subType === 'Accident') {
-                    cautionIconHtml = "💥🚗"; classLabel = "caution-accident-icon"; customSize = [44, 34]; anchorOffsets = [22, 17];
-                }
+                let cautionIconHtml = "🚧"; let classLabel = "caution-closure-icon"; let anchorOffsets = [15, 15]; let customSize = [30, 30];
+                if (data.subType === 'Mild traffic') { cautionIconHtml = "🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [50, 26]; anchorOffsets = [25, 13]; } 
+                else if (data.subType === 'Heavy traffic') { cautionIconHtml = "🚘🚘🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [90, 26]; anchorOffsets = [45, 13]; } 
+                else if (data.subType === 'Accident') { cautionIconHtml = "💥🚗"; classLabel = "caution-accident-icon"; customSize = [44, 34]; anchorOffsets = [22, 17]; }
 
                 const cautionDivIcon = L.divIcon({ className: classLabel, html: cautionIconHtml, iconSize: customSize, iconAnchor: anchorOffsets });
                 const dynamicMarker = L.marker(incomingPos, { icon: cautionDivIcon }).addTo(map);
 
-                activeMarkersLog.push({
-                    category: 'Caution',
-                    timestamp: Date.now(),
-                    latlng: incomingPos,
-                    textString: data.textString,
-                    emojiIcon: cautionIconHtml,
-                    cssClass: classLabel,
-                    size: customSize,
-                    anchor: anchorOffsets,
-                    subType: data.subType,
-                    dir: data.dir
-                });
-
-                dynamicMarker.bindPopup(`
-                    <strong style="color:#b38f00;">${data.subType.toUpperCase()} (REMOTE)</strong><br>
-                    <strong>Direction:</strong> ${data.dir}<br>
-                    <span>Location: ${data.address}</span>
-                `);
-
+                activeMarkersLog.push({ category: 'Caution', timestamp: Date.now(), latlng: incomingPos, textString: data.textString, emojiIcon: cautionIconHtml, cssClass: classLabel, size: customSize, anchor: anchorOffsets, subType: data.subType, dir: data.dir });
+                dynamicMarker.bindPopup(` <strong style="color:#b38f00;">${data.subType.toUpperCase()} (REMOTE)</strong><br> <strong>Direction:</strong> ${data.dir}<br> <span>Location: ${data.address}</span> `);
                 dispatchRemoteAudioNarration(data.category, { type: data.subType, direction: data.dir }, data.address);
-
                 setTimeout(() => { map.removeLayer(dynamicMarker); }, 1200000);
             }
             else if (data.category === 'Police') {
                 const policeIcon = L.divIcon({ className: 'police-officer-icon', html: '👮', iconSize: [36, 36], iconAnchor: [18, 18] });
                 const officerMarker = L.marker(incomingPos, { icon: policeIcon }).addTo(map);
-
-                activeMarkersLog.push({
-                    category: 'Police',
-                    timestamp: Date.now(),
-                    latlng: incomingPos,
-                    textString: data.textString,
-                    emojiIcon: '👮',
-                    subType: data.subType,
-                    dir: data.dir
-                });
-
-                officerMarker.bindPopup(`
-                    <strong style="color:#007aff;">POLICE ENFORCEMENT (REMOTE)</strong><br>
-                    <strong>Type:</strong> ${data.subType.toUpperCase()} (${data.dir})<br>
-                    <span>Location: ${data.address}</span>
-                `);
-
+                activeMarkersLog.push({ category: 'Police', timestamp: Date.now(), latlng: incomingPos, textString: data.textString, emojiIcon: '👮', subType: data.subType, dir: data.dir });
+                officerMarker.bindPopup(` <strong style="color:#007aff;">POLICE ENFORCEMENT (REMOTE)</strong><br> <strong>Type:</strong> ${data.subType.toUpperCase()} (${data.dir})<br> <span>Location: ${data.address}</span> `);
                 dispatchRemoteAudioNarration(data.category, { type: data.subType, direction: data.dir }, data.address);
-
                 setTimeout(() => { map.removeLayer(officerMarker); }, 1800000);
             }
         }
 
         function dispatchRemoteAudioNarration(category, payload, resolvedAddressStr) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return;
-
             let finalSpeechString = "";
             if (category === 'Flag') {
-                if (payload === 'Hotel Driveway') {
-                    finalSpeechString = `Remote updates: One flag waiting inside the driveway of the hotel at ${resolvedAddressStr}`;
-                } else {
-                    finalSpeechString = `Remote updates: One flag waiting ${payload.toLowerCase()} at ${resolvedAddressStr}`;
-                }
+                if (payload === 'Hotel Driveway') { finalSpeechString = `Remote updates: One flag waiting inside the driveway of the hotel at ${resolvedAddressStr}`; } 
+                else { finalSpeechString = `Remote updates: One flag waiting ${payload.toLowerCase()} at ${resolvedAddressStr}`; }
             } 
-            else if (category === 'Caution') {
-                finalSpeechString = `Remote updates: One ${payload.type.toLowerCase()} reported ahead ${payload.direction.toLowerCase()} at ${resolvedAddressStr}`;
-            } 
+            else if (category === 'Caution') { finalSpeechString = `Remote updates: One ${payload.type.toLowerCase()} reported ahead ${payload.direction.toLowerCase()} at ${resolvedAddressStr}`; } 
             else if (category === 'Police') {
                 const speechDirection = payload.direction.toLowerCase();
-                if (payload.type === 'emergency') {
-                    finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} emergency`;
-                } else if (payload.type === 'hidden') {
-                    finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} they are hiding`;
-                } else {
-                    finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} Radar Radar`;
-                }
+                if (payload.type === 'emergency') { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} emergency`; } 
+                else if (payload.type === 'hidden') { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} they are hiding`; } 
+                else { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} Radar Radar`; }
             }
-
             lastSpokenSpeechString = finalSpeechString;
             const clearHardwareBuffer = new SpeechSynthesisUtterance("");
             window.speechSynthesis.speak(clearHardwareBuffer); 
-
             setTimeout(() => {
                 if (driverProfileMemory.isSuspended) return;
                 const utterance = new SpeechSynthesisUtterance(finalSpeechString);
-                utterance.rate = 1.0; 
-                window.speechSynthesis.speak(utterance);
+                utterance.rate = 1.0; window.speechSynthesis.speak(utterance);
             }, 1500);
         }
 
         function openDriverMatchingPortal() {
-            hideModals();
-            document.getElementById('match-ui-current-role').innerText = driverProfileMemory.role.toUpperCase();
+            hideModals(); document.getElementById('match-ui-current-role').innerText = driverProfileMemory.role.toUpperCase();
             document.getElementById('match-ui-current-phone').innerText = driverProfileMemory.phoneNumber || "None Added (Update Profile Setup)";
-            
-            syncCompanyDropdownUIFields();
-            document.getElementById('match-company-target-select').value = driverProfileMemory.company;
-            
-            renderMatchingBoardEntries();
-            showModal('driver-matching-pop');
+            syncCompanyDropdownUIFields(); document.getElementById('match-company-target-select').value = driverProfileMemory.company;
+            renderMatchingBoardEntries(); showModal('driver-matching-pop');
         }
 
         function submitAvailabilityToMatchPool() {
-            if (!driverProfileMemory.phoneNumber) {
-                alert("PHONE NUMBER IS REQUIRED IN YOUR DRIVER PROFILE SYSTEM BEFORE LOGGING CALENDAR AVAILABILITY TO SECURE BILATERAL COMMUNICATIONS.");
-                hideModals();
-                openFullProfileSettings();
-                return;
-            }
-
+            if (!driverProfileMemory.phoneNumber) { alert("PHONE NUMBER IS REQUIRED IN YOUR DRIVER PROFILE SYSTEM."); hideModals(); openFullProfileSettings(); return; }
             const chosenDate = document.getElementById('match-calendar-date').value;
             const chosenShift = document.getElementById('match-calendar-shift').value;
             const chosenCompany = document.getElementById('match-company-target-select').value;
-
-            if (!chosenDate) {
-                alert("PLEASE HIGHLIGHT A VALID TARGET DATE ON THE CALENDAR SYSTEM.");
-                return;
-            }
-            if (!chosenCompany || chosenCompany === "__ADD_NEW_COMPANY__") {
-                alert("PLEASE DECLARE A TARGET FLEET COMPANY FOR COOPERATIVE MATCH FILTERING.");
-                return;
-            }
+            if (!chosenDate) { alert("PLEASE HIGHLIGHT A VALID TARGET DATE."); return; }
+            if (!chosenCompany || chosenCompany === "__ADD_NEW_COMPANY__") { alert("PLEASE DECLARE A TARGET FLEET."); return; }
 
             const newCalendarItem = {
-                id: "M-" + Math.floor(100000 + Math.random() * 900000),
-                name: driverProfileMemory.displayName,
-                role: driverProfileMemory.role,
-                company: chosenCompany,
-                carNumber: driverProfileMemory.role === "Owner" ? driverProfileMemory.carNumber : "N/A",
-                date: chosenDate,
-                shift: chosenShift,
-                phone: driverProfileMemory.phoneNumber
+                id: "M-" + Math.floor(100000 + Math.random() * 900000), name: driverProfileMemory.displayName, role: driverProfileMemory.role, company: chosenCompany,
+                carNumber: driverProfileMemory.role === "Owner" ? driverProfileMemory.carNumber : "N/A", date: chosenDate, shift: chosenShift, phone: driverProfileMemory.phoneNumber
             };
-
-            mockSharedMatchingPool.push(newCalendarItem);
-            renderMatchingBoardEntries();
-            
-            alert(`SUCCESS: Your ${chosenShift} availability under "${chosenCompany}" for ${chosenDate} has been logged onto the shared marketplace boards!`);
+            mockSharedMatchingPool.push(newCalendarItem); renderMatchingBoardEntries();
+            alert(`SUCCESS: Availability logged!`);
         }
 
         function renderMatchingBoardEntries() {
-            const driversContainer = document.getElementById('matching-drivers-column-target');
-            const carsContainer = document.getElementById('matching-cars-column-target');
-            
-            driversContainer.innerHTML = "";
-            carsContainer.innerHTML = "";
-
-            const targetDate = document.getElementById('match-calendar-date').value;
-            const targetShift = document.getElementById('match-calendar-shift').value;
-            
-            const chosenCompanyVal = document.getElementById('match-company-target-select').value;
-            const targetCompanyNorm = chosenCompanyVal ? chosenCompanyVal.toLowerCase().trim() : "";
+            const driversContainer = document.getElementById('matching-drivers-column-target'); const carsContainer = document.getElementById('matching-cars-column-target');
+            driversContainer.innerHTML = ""; carsContainer.innerHTML = "";
+            const targetDate = document.getElementById('match-calendar-date').value; const targetShift = document.getElementById('match-calendar-shift').value;
+            const chosenCompanyVal = document.getElementById('match-company-target-select').value; const targetCompanyNorm = chosenCompanyVal ? chosenCompanyVal.toLowerCase().trim() : "";
             const myRole = driverProfileMemory.role;
-
-            let driverCount = 0;
-            let carCount = 0;
+            let driverCount = 0; let carCount = 0;
 
             mockSharedMatchingPool.forEach(item => {
                 if (item.date !== targetDate || item.shift !== targetShift) return;
-
                 const itemCompanyNorm = item.company.toLowerCase().trim();
-                
                 if (itemCompanyNorm !== targetCompanyNorm) return;
-
                 const row = document.createElement('div');
                 const isCrossRoleMatch = (item.role !== myRole);
                 row.className = "match-item-row" + (isCrossRoleMatch ? " is-perfect-match" : "");
-                
                 let matchBadgeHtml = isCrossRoleMatch ? `<span class="match-badge">Match</span>` : "";
                 let assetLabel = item.role === "Owner" ? `Car: #${item.carNumber}` : `Fleet: ${item.company}`;
-
-                row.innerHTML = `
-                    ${matchBadgeHtml}
-                    <strong>${item.name}</strong>
-                    <span style="font-size:0.72rem; color:#444;">${assetLabel}</span>
-                    <a href="tel:${item.phone}" class="match-call-btn">📞 Call</a>
-                `;
-
-                if (item.role === "Driver") {
-                    driversContainer.appendChild(row);
-                    driverCount++;
-                } else if (item.role === "Owner") {
-                    carsContainer.appendChild(row);
-                    carCount++;
-                }
+                row.innerHTML = ` ${matchBadgeHtml} <strong>${item.name}</strong> <span style="font-size:0.72rem; color:#444;">${assetLabel}</span> <a href="tel:${item.phone}" class="match-call-btn">📞 Call</a> `;
+                if (item.role === "Driver") { driversContainer.appendChild(row); driverCount++; } 
+                else if (item.role === "Owner") { carsContainer.appendChild(row); carCount++; }
             });
-
-            if (driverCount === 0) {
-                driversContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Drivers</div>`;
-            }
-            if (carCount === 0) {
-                carsContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Cars</div>`;
-            }
+            if (driverCount === 0) { driversContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Drivers</div>`; }
+            if (carCount === 0) { carsContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Cars</div>`; }
         }
 
         function accessAdminControlPortal() {
-            hideModals();
-            const challengeCode = prompt("ENTER CONFIDENTIAL ADMINISTRATIVE DISPATCH PASSCODE:");
+            hideModals(); const challengeCode = prompt("ENTER CONFIDENTIAL ADMINISTRATIVE DISPATCH PASSCODE:");
             if (challengeCode === null) return;
-            
             if (challengeCode === "7777") {
                 document.getElementById('admin-display-uid').innerText = driverProfileMemory.uid || "Pending";
                 document.getElementById('admin-display-name').innerText = driverProfileMemory.displayName || "Unknown";
                 document.getElementById('admin-display-vehicle').innerText = `${driverProfileMemory.company} (#${driverProfileMemory.carNumber})`;
                 showModal('admin-control-pop');
-            } else {
-                alert("ACCESS DENIED. INVALID AUTHORIZATION SECURITY KEY CODE.");
-            }
+            } else { alert("ACCESS DENIED."); }
         }
 
         function executeAdminSuspensionAction() {
             const verification = confirm(`CONFIRM ENFORCEMENT: Place driver "${driverProfileMemory.displayName}" on a suspension time out session immediately?`);
             if (!verification) return;
-
-            driverProfileMemory.isSuspended = true;
-            isShiftActive = false;
-            
+            driverProfileMemory.isSuspended = true; isShiftActive = false;
             if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
-            
-            audioMuted = true;
-            const btn = document.getElementById('mute-toggle-btn');
+            audioMuted = true; const btn = document.getElementById('mute-toggle-btn');
             if (btn) { btn.className = "util-circle active-mute"; btn.innerHTML = "AUDIO<br>MUTED"; }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
-
-            if (globalSocketInstance) {
-                globalSocketInstance.close();
-                globalSocketInstance = null;
-            }
-
-            hideModals();
-            trackVehicleView = false;
-            document.getElementById('dynamic-zoom-box').classList.remove('zoom-visible');
-
-            document.getElementById('status-screen-emoji').innerText = "⚠️";
-            document.getElementById('status-screen-heading').innerText = "Profile Suspended";
+            
+            if (mqttClient) { mqttClient.disconnect(); mqttClient = null; }
+            
+            hideModals(); trackVehicleView = false; document.getElementById('dynamic-zoom-box').classList.remove('zoom-visible');
+            document.getElementById('status-screen-emoji').innerText = "⚠️"; document.getElementById('status-screen-heading').innerText = "Profile Suspended";
             document.getElementById('status-screen-body').innerText = `Attention: Account status has been locked down by admin management. Your profile (${driverProfileMemory.uid}) is placed inside an active time out penalty. Communication modules disabled.`;
             document.getElementById('status-screen-btn').style.display = "none"; 
-
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
 
-        function openCautionSelectionFromMenu() {
-            hideModals();
-            showModal('caution-type-pop');
-        }
-
-        function openCamerasFromMenu() {
-            hideModals();
-            showModal('camera-menu-pop');
-        }
-
-        function triggerReplayFromMenu() {
-            hideModals();
-            replayLastAudioNarration();
-        }
-
-        function openChatLogHistoryMenuFromMenu() {
-            hideModals();
-            openChatLogHistoryMenu();
-        }
-
-        function openFeedbackFromMenu() {
-            hideModals();
-            showModal('suggestion-pop');
-        }
-
-        function backToUtilityMenu(currentModalId) {
-            document.getElementById(currentModalId).style.display = 'none';
-            showModal('utility-menu-pop');
-        }
-
-        function openCameraListMenu() {
-            showModal('camera-menu-pop');
-        } 
-
-        function openLiveCameraTab(targetUrl) {
-            window.open(targetUrl, '_blank');
-        } 
+        function openCautionSelectionFromMenu() { hideModals(); showModal('caution-type-pop'); }
+        function openCamerasFromMenu() { hideModals(); showModal('camera-menu-pop'); }
+        function triggerReplayFromMenu() { hideModals(); replayLastAudioNarration(); }
+        function openChatLogHistoryMenuFromMenu() { hideModals(); openChatLogHistoryMenu(); }
+        function openFeedbackFromMenu() { hideModals(); showModal('suggestion-pop'); }
+        function backToUtilityMenu(currentModalId) { document.getElementById(currentModalId).style.display = 'none'; showModal('utility-menu-pop'); }
+        function openCameraListMenu() { showModal('camera-menu-pop'); } 
+        function openLiveCameraTab(targetUrl) { window.open(targetUrl, '_blank'); } 
 
         map.locate({ watch: true, enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); 
 
@@ -1295,42 +960,19 @@ HTML
             if (!vehicleMarker) {
                 vehicleMarker = L.marker(e.latlng, { icon: generateDynamicTaxiIcon() }).addTo(map);
                 map.setView(e.latlng, preferredZoomDepth);
-            } else {
-                vehicleMarker.setLatLng(e.latlng);
-            } 
-            if (trackVehicleView) {
-                map.setView(e.latlng, preferredZoomDepth);
-            } 
+            } else { vehicleMarker.setLatLng(e.latlng); } 
+            if (trackVehicleView) { map.setView(e.latlng, preferredZoomDepth); } 
             fetchAddressFromCoordinates(e.latlng);
         }); 
 
-        setInterval(() => {
-            if (trackVehicleView && vehiclePos && !driverProfileMemory.isSuspended) {
-                map.setView(vehiclePos, preferredZoomDepth);
-            }
-        }, 2000);
-        
-        map.on('dragstart', function() {
-            if (!isShiftActive) return;
-            trackVehicleView = false;
-            const btn = document.getElementById('lock-center-btn');
-            btn.className = "util-circle";
-            btn.innerHTML = "MAP<br>FREE";
-        }); 
+        setInterval(() => { if (trackVehicleView && vehiclePos && !driverProfileMemory.isSuspended) { map.setView(vehiclePos, preferredZoomDepth); } }, 2000);
+        map.on('dragstart', function() { if (!isShiftActive) return; trackVehicleView = false; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle"; btn.innerHTML = "MAP<br>FREE"; }); 
 
         function fetchAddressFromCoordinates(latlng, forcedCallback = null) {
             let distanceMoved = 0;
-            if (lastGeocodedPos) {
-                distanceMoved = latlng.distanceTo(lastGeocodedPos);
-            } 
-
-            if (lastGeocodedPos && distanceMoved < 15 && currentAddressData.isLoaded && !forcedCallback) {
-                if (forcedCallback) forcedCallback();
-                return;
-            } 
-
+            if (lastGeocodedPos) { distanceMoved = latlng.distanceTo(lastGeocodedPos); } 
+            if (lastGeocodedPos && distanceMoved < 15 && currentAddressData.isLoaded && !forcedCallback) { if (forcedCallback) forcedCallback(); return; } 
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1&_cb=${Date.now()}`; 
-
             fetch(url, { headers: { 'Accept-Language': 'en' } })
                 .then(res => res.json())
                 .then(data => {
@@ -1341,473 +983,228 @@ HTML
                         lastGeocodedPos = latlng;
                     }
                     if (forcedCallback) forcedCallback();
-                })
-                .catch(err => {
-                    console.log("Geocoding recovery active: " + err.message);
-                    if (distanceMoved > 20) {
-                        currentAddressData.houseNumber = "";
-                        currentAddressData.streetName = `Zone Track [${latlng.lat.toFixed(3)}]`;
-                    }
+                }).catch(err => {
+                    if (distanceMoved > 20) { currentAddressData.houseNumber = ""; currentAddressData.streetName = `Zone Track [${latlng.lat.toFixed(3)}]`; }
                     if (forcedCallback) forcedCallback();
                 });
         } 
 
-        function showModal(id) {
-            if (!isShiftActive && id !== 'shift-scheduler-pop') return;
-            
-            document.getElementById('screen-overlay').style.display = 'block';
-            document.getElementById(id).style.display = 'block';
-        } 
-
-        function hideModals() {
-            if (!isShiftActive) return;
-            
-            document.getElementById('screen-overlay').style.display = 'none';
-            document.querySelectorAll('.driver-modal').forEach(m => m.style.display = 'none');
-        } 
-
-        function handleRecenter() {
-            if (!isShiftActive || driverProfileMemory.isSuspended) return;
-            trackVehicleView = true;
-            const btn = document.getElementById('lock-center-btn');
-            btn.className = "util-circle active-center";
-            btn.innerHTML = "MAP<br>LOCKED";
-            if (vehiclePos) {
-                map.setView(vehiclePos, preferredZoomDepth);
-            }
-        } 
-
+        function showModal(id) { if (!isShiftActive && id !== 'shift-scheduler-pop') return; document.getElementById('screen-overlay').style.display = 'block'; document.getElementById(id).style.display = 'block'; } 
+        function hideModals() { if (!isShiftActive) return; document.getElementById('screen-overlay').style.display = 'none'; document.querySelectorAll('.driver-modal').forEach(m => m.style.display = 'none'); } 
+        function handleRecenter() { if (!isShiftActive || driverProfileMemory.isSuspended) return; trackVehicleView = true; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle active-center"; btn.innerHTML = "MAP<br>LOCKED"; if (vehiclePos) { map.setView(vehiclePos, preferredZoomDepth); } } 
         function handleMuteToggle() {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
-            audioMuted = !audioMuted;
-            const btn = document.getElementById('mute-toggle-btn');
-            if(audioMuted) {
-                btn.className = "util-circle active-mute";
-                btn.innerHTML = "AUDIO<br>MUTED";
-            } else {
-                btn.className = "util-circle";
-                btn.innerHTML = "AUDIO<br>ON";
-            }
+            audioMuted = !audioMuted; const btn = document.getElementById('mute-toggle-btn');
+            if(audioMuted) { btn.className = "util-circle active-mute"; btn.innerHTML = "AUDIO<br>MUTED"; } else { btn.className = "util-circle"; btn.innerHTML = "AUDIO<br>ON"; }
         } 
 
         function dropFlagDirect(selectionValue) {
-            if (!isShiftActive) return;
-            hideModals(); 
-            if (!vehiclePos) return; 
-
+            if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
             const targetPos = L.latLng(vehiclePos.lat, vehiclePos.lng); 
-
             fetchAddressFromCoordinates(targetPos, function() {
-                const redManIcon = L.divIcon({
-                    className: 'red-man-icon',
-                    html: selectionValue === 'Hotel Driveway' ? '🏨' : '🚶',
-                    iconSize: [34, 34],
-                    iconAnchor: [17, 32]
-                }); 
-
+                const redManIcon = L.divIcon({ className: 'red-man-icon', html: selectionValue === 'Hotel Driveway' ? '🏨' : '🚶', iconSize: [34, 34], iconAnchor: [17, 32] }); 
                 const flagMarker = L.marker(targetPos, { icon: redManIcon }).addTo(map);
                 const completeAddress = currentAddressData.houseNumber ? `${currentAddressData.houseNumber} ${currentAddressData.streetName}` : currentAddressData.streetName;
-                
-                let headerLabel = `<strong style="color:#ff3b30;">FLAG WAITING</strong>`;
-                let displayString = `Passenger Flag Waiting (${selectionValue}) at ${completeAddress}`;
-                if (selectionValue === 'Hotel Driveway') {
-                    headerLabel = `<strong style="color:#5856d6;">HOTEL DISPATCH FLAG</strong>`;
-                    displayString = `Hotel Dispatch Flag waiting at ${completeAddress}`;
-                }
+                let headerLabel = `<strong style="color:#ff3b30;">FLAG WAITING</strong>`; let displayString = `Passenger Flag Waiting (${selectionValue}) at ${completeAddress}`;
+                if (selectionValue === 'Hotel Driveway') { headerLabel = `<strong style="color:#5856d6;">HOTEL DISPATCH FLAG</strong>`; displayString = `Hotel Dispatch Flag waiting at ${completeAddress}`; }
 
-                activeMarkersLog.push({
-                    category: 'Flag',
-                    timestamp: Date.now(),
-                    latlng: targetPos,
-                    textString: displayString,
-                    emojiIcon: selectionValue === 'Hotel Driveway' ? '🏨' : '🚶',
-                    subType: selectionValue
-                });
-
+                activeMarkersLog.push({ category: 'Flag', timestamp: Date.now(), latlng: targetPos, textString: displayString, emojiIcon: selectionValue === 'Hotel Driveway' ? '🏨' : '🚶', subType: selectionValue });
                 const navigationUrl = `https://www.google.com/maps/search/?api=1&query=${targetPos.lat},${targetPos.lng}`;
-                flagMarker.bindPopup(`
-                    ${headerLabel}<br>
-                    <strong>Placement:</strong> ${selectionValue}<br>
-                    <span>Location: ${completeAddress}</span><br><br>
-                    <a href="${navigationUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a>
-                `).openPopup(); 
+                flagMarker.bindPopup(` ${headerLabel}<br> <strong>Placement:</strong> ${selectionValue}<br> <span>Location: ${completeAddress}</span><br><br> <a href="${navigationUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a> `).openPopup(); 
 
-                broadcastPayloadToPeerDevices({
-                    category: 'Flag',
-                    subType: selectionValue,
-                    coordinates: [targetPos.lat, targetPos.lng],
-                    address: completeAddress,
-                    textString: displayString
-                });
-
+                broadcastPayloadToPeerDevices({ category: 'Flag', subType: selectionValue, coordinates: [targetPos.lat, targetPos.lng], address: completeAddress, textString: displayString });
                 dispatchAudioNarration('Flag', selectionValue); 
-
-                setTimeout(() => {
-                    map.removeLayer(flagMarker);
-                }, 300000); 
+                setTimeout(() => { map.removeLayer(flagMarker); }, 300000); 
             });
         } 
 
-        function selectCautionType(type) {
-            if (!isShiftActive) return;
-            chosenCautionType = type;
-            hideModals();
-            showModal('caution-dir-pop');
-        } 
-
+        function selectCautionType(type) { if (!isShiftActive) return; chosenCautionType = type; hideModals(); showModal('caution-dir-pop'); } 
         function dropCautionMarker(directionValue) {
-            if (!isShiftActive) return;
-            hideModals(); 
-            if (!vehiclePos) return; 
-
-            const targetPos = L.latLng(vehiclePos.lat, vehiclePos.lng);
-            const typeLabel = chosenCautionType;
-            const directionLabel = directionValue; 
-
+            if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
+            const targetPos = L.latLng(vehiclePos.lat, vehiclePos.lng); const typeLabel = chosenCautionType; const directionLabel = directionValue; 
             fetchAddressFromCoordinates(targetPos, function() {
-                let cautionIconHtml = "";
-                let classLabel = "";
-                let anchorOffsets = [15, 15];
-                let customSize = [30, 30];
-
-                if (typeLabel === 'Mild traffic') {
-                    cautionIconHtml = "🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [50, 26]; anchorOffsets = [25, 13];
-                } else if (typeLabel === 'Heavy traffic') {
-                    cautionIconHtml = "🚘🚘🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [90, 26]; anchorOffsets = [45, 13];
-                } else if (typeLabel === 'Accident') {
-                    cautionIconHtml = "💥🚗"; classLabel = "caution-accident-icon"; customSize = [44, 34]; anchorOffsets = [22, 17];
-                } else if (typeLabel === 'Road closure') {
-                    cautionIconHtml = "🚧"; classLabel = "caution-closure-icon"; customSize = [34, 34]; anchorOffsets = [17, 17];
-                }
+                let cautionIconHtml = ""; let classLabel = ""; let anchorOffsets = [15, 15]; let customSize = [30, 30];
+                if (typeLabel === 'Mild traffic') { cautionIconHtml = "🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [50, 26]; anchorOffsets = [25, 13]; } 
+                else if (typeLabel === 'Heavy traffic') { cautionIconHtml = "🚘🚘🚘🚘"; classLabel = "caution-traffic-icon"; customSize = [90, 26]; anchorOffsets = [45, 13]; } 
+                else if (typeLabel === 'Accident') { cautionIconHtml = "💥🚗"; classLabel = "caution-accident-icon"; customSize = [44, 34]; anchorOffsets = [22, 17]; } 
+                else if (typeLabel === 'Road closure') { cautionIconHtml = "🚧"; classLabel = "caution-closure-icon"; customSize = [34, 34]; anchorOffsets = [17, 17]; }
 
                 const cautionDivIcon = L.divIcon({ className: classLabel, html: cautionIconHtml, iconSize: customSize, iconAnchor: anchorOffsets });
                 const dynamicMarker = L.marker(targetPos, { icon: cautionDivIcon }).addTo(map); 
                 const completeAddress = currentAddressData.houseNumber ? `${currentAddressData.houseNumber} ${currentAddressData.streetName}` : currentAddressData.streetName; 
-
                 const completeCautionText = `Caution Conditions: ${typeLabel} ahead (${directionLabel}) at ${completeAddress}`;
 
-                activeMarkersLog.push({
-                    category: 'Caution',
-                    timestamp: Date.now(),
-                    latlng: targetPos,
-                    textString: completeCautionText,
-                    emojiIcon: cautionIconHtml,
-                    cssClass: classLabel,
-                    size: customSize,
-                    anchor: anchorOffsets,
-                    subType: typeLabel,
-                    dir: directionLabel
-                });
-
-                dynamicMarker.bindPopup(`
-                    <strong style="color:#b38f00;">${typeLabel.toUpperCase()}</strong><br>
-                    <strong>Direction:</strong> ${directionLabel}<br>
-                    <span>Location: ${completeAddress}</span>
-                `).openPopup(); 
-
-                broadcastPayloadToPeerDevices({
-                    category: 'Caution',
-                    subType: typeLabel,
-                    dir: directionLabel,
-                    coordinates: [targetPos.lat, targetPos.lng],
-                    address: completeAddress,
-                    textString: completeCautionText
-                });
-
+                activeMarkersLog.push({ category: 'Caution', timestamp: Date.now(), latlng: targetPos, textString: completeCautionText, emojiIcon: cautionIconHtml, cssClass: classLabel, size: customSize, anchor: anchorOffsets, subType: typeLabel, dir: directionLabel });
+                dynamicMarker.bindPopup(` <strong style="color:#b38f00;">${typeLabel.toUpperCase()}</strong><br> <strong>Direction:</strong> ${directionLabel}<br> <span>Location: ${completeAddress}</span> `).openPopup(); 
+                broadcastPayloadToPeerDevices({ category: 'Caution', subType: typeLabel, dir: directionLabel, coordinates: [targetPos.lat, targetPos.lng], address: completeAddress, textString: completeCautionText });
                 dispatchAudioNarration('Caution', { type: typeLabel, direction: directionLabel });
-
-                setTimeout(() => {
-                    map.removeLayer(dynamicMarker);
-                }, 1200000);
+                setTimeout(() => { map.removeLayer(dynamicMarker); }, 1200000);
             });
         } 
 
-        function selectPoliceType(type) {
-            if (!isShiftActive) return;
-            chosenPoliceType = type.toLowerCase().trim();
-            hideModals();
-            showModal('police-dir-pop');
-        } 
-
+        function selectPoliceType(type) { if (!isShiftActive) return; chosenPoliceType = type.toLowerCase().trim(); hideModals(); showModal('police-dir-pop'); } 
         function dropPoliceMarker(directionValue) {
-            if (!isShiftActive) return;
-            hideModals(); 
-            if (!vehiclePos) return; 
-
-            const targetPos = L.latLng(vehiclePos.lat, vehiclePos.lng);
-            const typeLabel = chosenPoliceType; 
-            const directionLabel = directionValue; 
-
+            if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
+            const targetPos = L.latLng(vehiclePos.lat, vehiclePos.lng); const typeLabel = chosenPoliceType; const directionLabel = directionValue; 
             fetchAddressFromCoordinates(targetPos, function() {
                 const policeIcon = L.divIcon({ className: 'police-officer-icon', html: '👮', iconSize: [36, 36], iconAnchor: [18, 18] });
                 const officerMarker = L.marker(targetPos, { icon: policeIcon }).addTo(map);
                 const completeAddress = currentAddressData.houseNumber ? `${currentAddressData.houseNumber} ${currentAddressData.streetName}` : currentAddressData.streetName; 
-
                 const completePoliceText = `Police reported ahead ${directionLabel.toLowerCase()} at ${completeAddress} - Type: ${typeLabel.toUpperCase()}`;
 
-                activeMarkersLog.push({
-                    category: 'Police',
-                    timestamp: Date.now(),
-                    latlng: targetPos,
-                    textString: completePoliceText,
-                    emojiIcon: '👮',
-                    subType: typeLabel,
-                    dir: directionLabel
-                });
-
-                officerMarker.bindPopup(`
-                    <strong style="color:#007aff;">POLICE ENFORCEMENT</strong><br>
-                    <strong>Type:</strong> ${typeLabel.toUpperCase()} (${directionLabel})<br>
-                    <span>Location: ${completeAddress}</span>
-                `).openPopup(); 
-
-                broadcastPayloadToPeerDevices({
-                    category: 'Police',
-                    subType: typeLabel,
-                    dir: directionLabel,
-                    coordinates: [targetPos.lat, targetPos.lng],
-                    address: completeAddress,
-                    textString: completePoliceText
-                });
-
+                activeMarkersLog.push({ category: 'Police', timestamp: Date.now(), latlng: targetPos, textString: completePoliceText, emojiIcon: '👮', subType: typeLabel, dir: directionLabel });
+                officerMarker.bindPopup(` <strong style="color:#007aff;">POLICE ENFORCEMENT</strong><br> <strong>Type:</strong> ${typeLabel.toUpperCase()} (${directionLabel})<br> <span>Location: ${completeAddress}</span> `).openPopup(); 
+                broadcastPayloadToPeerDevices({ category: 'Police', subType: typeLabel, dir: directionLabel, coordinates: [targetPos.lat, targetPos.lng], address: completeAddress, textString: completePoliceText });
                 dispatchAudioNarration('Police', { type: typeLabel, direction: directionLabel });
-
-                setTimeout(() => {
-                    map.removeLayer(officerMarker);
-                }, 1800000);
+                setTimeout(() => { map.removeLayer(officerMarker); }, 1800000);
             });
         } 
 
         function breakHouseNumbersIntoCouples(numberStr) {
             if (!numberStr || isNaN(numberStr)) return numberStr;
-            
             if (numberStr.length === 4) {
-                const leadingPair = parseInt(numberStr.substring(0, 2), 10);
-                const trailingPair = parseInt(numberStr.substring(2, 4), 10);
+                const leadingPair = parseInt(numberStr.substring(0, 2), 10); const trailingPair = parseInt(numberStr.substring(2, 4), 10);
                 if (trailingPair === 0) return `${leadingPair} hundred`;
                 if (trailingPair < 10) return `${leadingPair} oh ${trailingPair}`;
                 return `${leadingPair} ${trailingPair}`;
             }
-            
             if (numberStr.length === 3) {
-                const leadingDigit = parseInt(numberStr.substring(0, 1), 10);
-                const trailingPair = parseInt(numberStr.substring(1, 3), 10);
+                const leadingDigit = parseInt(numberStr.substring(0, 1), 10); const trailingPair = parseInt(numberStr.substring(1, 3), 10);
                 if (trailingPair === 0) return `${leadingDigit} hundred`;
                 if (trailingPair < 10) return `${leadingDigit} oh ${trailingPair}`;
                 return `${leadingDigit} ${trailingPair}`;
             } 
-
             return numberStr;
         } 
 
         function dispatchAudioNarration(category, payload) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return; 
-
             const spokenHouseNumber = breakHouseNumbersIntoCouples(currentAddressData.houseNumber);
             const addressAudioString = spokenHouseNumber ? `${spokenHouseNumber} ${currentAddressData.streetName}` : currentAddressData.streetName;
-            
             let finalSpeechString = "";
             
             if (category === 'Flag') {
-                if (payload === 'Hotel Driveway') {
-                    finalSpeechString = `One flag waiting inside the driveway of the hotel at ${addressAudioString}`;
-                } else {
-                    finalSpeechString = `One flag waiting ${payload.toLowerCase()} at ${addressAudioString}`;
-                }
+                if (payload === 'Hotel Driveway') { finalSpeechString = `One flag waiting inside the driveway of the hotel at ${addressAudioString}`; } 
+                else { finalSpeechString = `One flag waiting ${payload.toLowerCase()} at ${addressAudioString}`; }
             } 
-            else if (category === 'Caution') {
-                finalSpeechString = `One ${payload.type.toLowerCase()} reported ahead ${payload.direction.toLowerCase()} at ${addressAudioString}`;
-            } 
+            else if (category === 'Caution') { finalSpeechString = `One ${payload.type.toLowerCase()} reported ahead ${payload.direction.toLowerCase()} at ${addressAudioString}`; } 
             else if (category === 'Police') {
                 const speechDirection = payload.direction.toLowerCase();
-                
-                if (payload.type === 'emergency') {
-                    finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} emergency`;
-                } 
-                else if (payload.type === 'hidden') {
-                    finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} they are hiding they are hiding`;
-                } 
-                else {
-                    finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} Radar Radar`;
-                }
+                if (payload.type === 'emergency') { finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} emergency`; } 
+                else if (payload.type === 'hidden') { finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} they are hiding they are hiding`; } 
+                else { finalSpeechString = `One police reported ahead ${speechDirection} at ${addressAudioString} Radar Radar`; }
             } 
-
             lastSpokenSpeechString = finalSpeechString;
-
-            const clearHardwareBuffer = new SpeechSynthesisUtterance("");
-            window.speechSynthesis.speak(clearHardwareBuffer); 
-
+            const clearHardwareBuffer = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(clearHardwareBuffer); 
             setTimeout(() => {
                 if (driverProfileMemory.isSuspended) return;
                 const utterance = new SpeechSynthesisUtterance(finalSpeechString);
-                utterance.rate = 1.0; 
-                window.speechSynthesis.speak(utterance);
+                utterance.rate = 1.0; window.speechSynthesis.speak(utterance);
             }, 1500);
         } 
 
         function replayLastAudioNarration() {
             if (!isShiftActive || !lastSpokenSpeechString || driverProfileMemory.isSuspended) return;
-            
-            const clearHardwareBuffer = new SpeechSynthesisUtterance("");
-            window.speechSynthesis.speak(clearHardwareBuffer); 
-
+            const clearHardwareBuffer = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(clearHardwareBuffer); 
             setTimeout(() => {
                 if (driverProfileMemory.isSuspended) return;
                 const utterance = new SpeechSynthesisUtterance(lastSpokenSpeechString);
-                utterance.rate = 1.0; 
-                window.speechSynthesis.speak(utterance);
+                utterance.rate = 1.0; window.speechSynthesis.speak(utterance);
             }, 200);
         }
 
         function submitDriverSuggestion() {
             if (!isShiftActive) return;
-            const field = document.getElementById('driver-suggestion-text');
-            const note = field.value.trim();
-            
-            if (!note) {
-                alert("Please enter a suggestion before submitting.");
-                return;
-            }
-            
-            console.log("SUGGESTION CAPTURED: ", {
-                timestamp: new Date().toISOString(),
-                driverId: driverProfileMemory.uid,
-                driverName: driverProfileMemory.displayName,
-                coordinates: vehiclePos ? [vehiclePos.lat, vehiclePos.lng] : "No GPS context",
-                messageContent: note
-            });
-            
-            field.value = "";
-            hideModals();
-            alert("Thank you! Your suggestion has been recorded.");
+            const field = document.getElementById('driver-suggestion-text'); const note = field.value.trim();
+            if (!note) { alert("Please enter a suggestion before submitting."); return; }
+            field.value = ""; hideModals(); alert("Thank you! Your suggestion has been recorded.");
         }
 
-        function openChatLogHistoryMenu() {
-            if (!isShiftActive) return;
-            showModal('chat-log-pop');
-            switchChatLogTab(activeChatLogTab);
-        }
-
+        function openChatLogHistoryMenu() { if (!isShiftActive) return; showModal('chat-log-pop'); switchChatLogTab(activeChatLogTab); }
         function switchChatLogTab(categoryTab) {
-            if (!isShiftActive) return;
-            activeChatLogTab = categoryTab;
-            
+            if (!isShiftActive) return; activeChatLogTab = categoryTab;
             document.getElementById('tab-btn-flag').className = "chat-tab-btn" + (categoryTab === 'Flag' ? " active-tab-flags" : "");
             document.getElementById('tab-btn-caution').className = "chat-tab-btn" + (categoryTab === 'Caution' ? " active-tab-caution" : "");
             document.getElementById('tab-btn-police').className = "chat-tab-btn" + (categoryTab === 'Police' ? " active-tab-police" : "");
-            
             renderChatLogList();
         }
 
         function renderChatLogList() {
-            const container = document.getElementById('chat-list-target');
-            container.innerHTML = "";
-            
-            const now = Date.now();
-            const timeLimitMs = (activeChatLogTab === 'Police') ? (120 * 60 * 1000) : (30 * 60 * 1000);
-            
-            const filteredItems = activeMarkersLog.filter(item => {
-                return item.category === activeChatLogTab && (now - item.timestamp <= timeLimitMs);
-            });
-            
+            const container = document.getElementById('chat-list-target'); container.innerHTML = "";
+            const now = Date.now(); const timeLimitMs = (activeChatLogTab === 'Police') ? (120 * 60 * 1000) : (30 * 60 * 1000);
+            const filteredItems = activeMarkersLog.filter(item => { return item.category === activeChatLogTab && (now - item.timestamp <= timeLimitMs); });
             filteredItems.sort((a, b) => b.timestamp - a.timestamp);
             
-            if (filteredItems.length === 0) {
-                container.innerHTML = `<div class="chat-empty-msg">No recent ${activeChatLogTab.toLowerCase()} logs found</div>`;
-                return;
-            }
+            if (filteredItems.length === 0) { container.innerHTML = `<div class="chat-empty-msg">No recent ${activeChatLogTab.toLowerCase()} logs found</div>`; return; }
             
             filteredItems.forEach(item => {
                 const elapsedMins = Math.round((now - item.timestamp) / 60000);
-                const logCard = document.createElement('div');
-                logCard.className = "chat-log-item";
+                const logCard = document.createElement('div'); logCard.className = "chat-log-item";
                 
                 logCard.onclick = function() {
-                    if (!isShiftActive) return;
-                    hideModals();
-                    trackVehicleView = false;
-                    
-                    const centerBtn = document.getElementById('lock-center-btn');
-                    centerBtn.className = "util-circle";
-                    centerBtn.innerHTML = "MAP<br>FREE";
-                    
+                    if (!isShiftActive) return; hideModals(); trackVehicleView = false;
+                    const centerBtn = document.getElementById('lock-center-btn'); centerBtn.className = "util-circle"; centerBtn.innerHTML = "MAP<br>FREE";
                     map.setView(item.latlng, preferredZoomDepth);
                     
-                    let customHistoryIcon;
-                    let popupContentHtml = "";
-                    
+                    let customHistoryIcon; let popupContentHtml = "";
                     if (item.category === 'Flag') {
                         const targetNavUrl = `https://www.google.com/maps/search/?api=1&query=${item.latlng.lat},${item.latlng.lng}`;
-                        customHistoryIcon = L.divIcon({
-                            className: 'red-man-icon',
-                            html: item.emojiIcon || '🚶',
-                            iconSize: [34, 34],
-                            iconAnchor: [17, 32]
-                        });
-                        popupContentHtml = `
-                            <strong style="color:#ff3b30;">HISTORICAL LOGGED FLAG</strong><br>
-                            <span>${item.textString}</span><br><br>
-                            <a href="${targetNavUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a>
-                        `;
+                        customHistoryIcon = L.divIcon({ className: 'red-man-icon', html: item.emojiIcon || '🚶', iconSize: [34, 34], iconAnchor: [17, 32] });
+                        popupContentHtml = ` <strong style="color:#ff3b30;">HISTORICAL LOGGED FLAG</strong><br> <span>${item.textString}</span><br><br> <a href="${targetNavUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a> `;
                     } 
                     else if (item.category === 'Caution') {
-                        customHistoryIcon = L.divIcon({
-                            className: item.cssClass || 'caution-closure-icon',
-                            html: item.emojiIcon || '🚧',
-                            iconSize: item.size || [34, 34],
-                            iconAnchor: item.anchor || [17, 17]
-                        });
-                        popupContentHtml = `
-                            <strong style="color:#b38f00;">HISTORICAL CAUTION REPORT</strong><br>
-                            <span>${item.textString}</span>
-                        `;
+                        customHistoryIcon = L.divIcon({ className: item.cssClass || 'caution-closure-icon', html: item.emojiIcon || '🚧', iconSize: item.size || [34, 34], iconAnchor: item.anchor || [17, 17] });
+                        popupContentHtml = ` <strong style="color:#b38f00;">HISTORICAL CAUTION REPORT</strong><br> <span>${item.textString}</span> `;
                     } 
                     else if (item.category === 'Police') {
-                        customHistoryIcon = L.divIcon({
-                            className: 'police-officer-icon',
-                            html: '👮',
-                            iconSize: [36, 36],
-                            iconAnchor: [18, 18]
-                        });
-                        popupContentHtml = `
-                            <strong style="color:#007aff;">HISTORICAL POLICE LOG</strong><br>
-                            <span>${item.textString}</span>
-                        `;
+                        customHistoryIcon = L.divIcon({ className: 'police-officer-icon', html: '👮', iconSize: [36, 36], iconAnchor: [18, 18] });
+                        popupContentHtml = ` <strong style="color:#007aff;">HISTORICAL POLICE LOG</strong><br> <span>${item.textString}</span> `;
                     }
                     
                     const temporaryHistoryMarker = L.marker(item.latlng, { icon: customHistoryIcon }).addTo(map);
                     temporaryHistoryMarker.bindPopup(popupContentHtml).openPopup();
-                    
-                    setTimeout(() => {
-                        map.removeLayer(temporaryHistoryMarker);
-                    }, 30000);
+                    setTimeout(() => { map.removeLayer(temporaryHistoryMarker); }, 30000);
                 };
                 
-                logCard.innerHTML = `
-                    <span class="time-badge">${elapsedMins === 0 ? 'Just Now' : elapsedMins + ' mins ago'}</span>
-                    ${item.textString}
-                `;
+                logCard.innerHTML = ` <span class="time-badge">${elapsedMins === 0 ? 'Just Now' : elapsedMins + ' mins ago'}</span> ${item.textString} `;
                 container.appendChild(logCard);
             });
         }
 
-        async function maintainScreenWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLockToken = await navigator.wakeLock.request('screen');
-                }
-            } catch (err) {
-                console.log("Wake lock framework notice: " + err.message);
-            }
-        } 
-
+        async function maintainScreenWakeLock() { try { if ('wakeLock' in navigator) { wakeLockToken = await navigator.wakeLock.request('screen'); } } catch (err) {} } 
         window.addEventListener('load', maintainScreenWakeLock); 
+        document.addEventListener('visibilitychange', async () => { if (wakeLockToken !== null && document.visibilityState === 'visible') { maintainScreenWakeLock(); } });
 
-        document.addEventListener('visibilitychange', async () => {
-            if (wakeLockToken !== null && document.visibilityState === 'visible') {
-                maintainScreenWakeLock();
-            }
+        // =========================================================================================
+        // PWA INSTALLATION TRIGGER ENGINE
+        // =========================================================================================
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Reveal the Install button inside the Utility Menu
+            document.getElementById('pwa-install-btn').style.display = 'block'; 
         });
+
+        function triggerPwaInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('pwa-install-btn').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert("To install, open your browser options menu (three dots or share icon) and select 'Add to Home Screen'.");
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error', err));
+            });
+        }
     </script>
 </body>
 </html>
