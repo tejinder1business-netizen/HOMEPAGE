@@ -1,6 +1,6 @@
 {
-  "name": "AppWall.ca",
-  "short_name": "AppWall",
+  "name": "TAXI COMPANION",
+  "short_name": "TC",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ff0000",
