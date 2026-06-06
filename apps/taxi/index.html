@@ -182,6 +182,9 @@
     </style>
 </head>
 <body> 
+      <!--==============================================================================-->
+                <!--   ZOOM BUTTON  -->
+      <!--==============================================================================-->
 
     <div id="map"></div> 
 
@@ -190,28 +193,53 @@
         <button class="custom-zoom-btn" onclick="executeManualZoomAction(-1)">-</button>
     </div>
 
+    <!--==============================================================================-->
+                <!--   FLAG & POLICE BUTTON  -->
+    <!--==============================================================================-->
+
     <div class="top-actions">
         <button class="action-btn btn-flag" onclick="showModal('flag-pop')">🔴<br><span>FLAG</span></button>
         <button class="action-btn btn-police" onclick="showModal('police-pop')">👮<br><span>POLICE</span></button>
     </div> 
+     <!--==============================================================================-->
+                <!--   MENU BUTTON  -->
+     <!--==============================================================================-->
+
 
     <div class="bottom-actions">
         <button class="action-btn btn-main-menu" onclick="showModal('utility-menu-pop')">📋<br><span>MENU</span></button>
     </div>
+    
+     <!--==============================================================================-->
+                <!--   MUTE BUTTON  -->
+     <!--==============================================================================-->
 
     <div class="side-util left-side">
         <button id="mute-toggle-btn" class="util-circle" onclick="handleMuteToggle()">AUDIO<br>ON</button>
     </div>
-    
+
+    <!--==============================================================================-->
+                <!--   MAP LOCK BUTTON  -->
+     <!--==============================================================================-->
+
     <div class="right-side-center">
         <button id="lock-center-btn" class="util-circle active-center" onclick="handleRecenter()">MAP<br>LOCKED</button>
     </div> 
+    <!--==============================================================================-->
+                <!--   DRIVER PROFILE BUTTON  -->
+     <!--==============================================================================-->
+
 
     <div class="right-side-bottom">
         <button id="profile-hud-trigger-btn" class="util-circle profile-hud-btn" onclick="openFullProfileSettings()">DRV<br>#342</button>
     </div>
 
     <div id="screen-overlay" class="modal-overlay" onclick="hideModals()"></div> 
+
+     <!--==============================================================================-->
+                <!--   DRIVER PROFILE SETUP BUTTON  -->
+     <!--==============================================================================-->
+
 
     <div id="shift-scheduler-pop" class="driver-modal shift-modal-grid">
         <span class="modal-title" id="profile-modal-main-title">Driver Profile Setup</span>
