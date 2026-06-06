@@ -1,5 +1,5 @@
 {
-  "name": "TAXI COMPANION",
+  "name": "Taxi Companion",
   "short_name": "TC",
   "start_url": "/index.html",
   "display": "standalone",
@@ -7,8 +7,8 @@
   "theme_color": "#ff0000",
   "icons": [
     {
-      "src": "/icon.png",
-      "sizes": "192x192",
+      "src": "/taxi-icon.png",
+      "sizes": "192x192 512x512",
       "type": "image/png"
     }
   ]
