@@ -18,55 +18,75 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
     <style>
+        /* ========================================================= */
+        /* 1. GLOBAL LAYOUT & MAP FOUNDATION                         */
+        /* (Sets the background, stops scrolling, sizes the map)     */
+        /* ========================================================= */
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #111; }
-        
         #map { width: 100%; height: 100%; position: absolute; top: 0; bottom: 0; z-index: 1; }
         
+        /* ========================================================= */
+        /* 2. DYNAMIC ZOOM CONTROLS                                  */
+        /* (The +/- buttons on the right side of the screen)         */
+        /* ========================================================= */
         .dynamic-zoom-container { position: absolute; top: 115px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease-in-out; }
         .dynamic-zoom-container.zoom-visible { opacity: 1; pointer-events: auto; }
         .custom-zoom-btn { width: 50px; height: 50px; background: #ffffff; border: 3px solid #1c1c1e; color: #1c1c1e; font-size: 1.8rem; font-weight: 900; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
         .custom-zoom-btn:active { background: #ffd100; }
 
+        /* ========================================================= */
+        /* 3. TOP & BOTTOM ACTION BUTTONS                            */
+        /* (Flag, Police, and Main Menu buttons)                     */
+        /* ========================================================= */
         .top-actions { position: absolute; top: 20px; left: 0; right: 0; padding: 0 20px; display: flex; justify-content: space-between; z-index: 1000; pointer-events: none; }
         .action-btn { pointer-events: auto; width: 82px; height: 82px; border-radius: 50%; border: 4px solid #fff; color: white; font-weight: bold; font-size: 0.82rem; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .btn-flag { background: #ff3b30; }
         .btn-police { background: #007aff; }
         .action-btn span { font-size: 0.62rem; margin-top: 2px; display: block; line-height: 1.1; font-weight: 900; } 
-
         .bottom-actions { position: absolute; bottom: 30px; left: 20px; z-index: 1000; }
         .btn-main-menu { background: #444446; color: white; border-color: #fff; }
 
+        /* ========================================================= */
+        /* 4. SIDE UTILITY CIRCLES                                   */
+        /* (Profile, Center Map, Mute buttons on the left/right)     */
+        /* ========================================================= */
         .side-util { position: absolute; z-index: 1000; display: flex; flex-direction: column; gap: 20px; }
         .left-side { left: 15px; top: 50%; transform: translateY(-50%); }
         .right-side-center { right: 15px; top: 50%; transform: translateY(-50%); position: absolute; z-index: 1000; }
         .right-side-bottom { right: 15px; bottom: 30px; position: absolute; z-index: 1000; }
-
         .util-circle { width: 70px; height: 70px; border-radius: 50%; background: #ffffff; border: 3px solid #1c1c1e; color: #1c1c1e; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; text-align: center; }
         .util-circle.active-mute { background: #ff453a; color: white; border-color: white; }
         .util-circle.active-center { background: #34c759; color: white; border-color: white; } 
         .util-circle.profile-hud-btn { background: #ffd100; color: #1c1c1e; border-color: #1c1c1e; }
 
+        /* ========================================================= */
+        /* 5. MAP MARKERS & ICONS                                    */
+        /* (The graphics that sit physically on the map)             */
+        /* ========================================================= */
         .taxi-vector-icon { background: #ffd100; border: 2px solid #000; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.4); text-align: center; font-weight: bold; font-size: 9px; line-height: 24px; color: black; font-family: monospace; padding: 0 2px; white-space: nowrap; }
         .taxi-vector-icon::after { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 10px; height: 4px; background: black; border-radius: 1px; } 
-
         .red-man-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6)); }
         .police-officer-icon { font-size: 36px; text-align: center; line-height: 36px; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.6)); }
-        
         .caution-traffic-icon { font-size: 26px; text-align: center; line-height: 26px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6)); white-space: nowrap; }
         .caution-accident-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6)); }
         .caution-closure-icon { font-size: 34px; text-align: center; line-height: 34px; filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6)); }
         
+        /* ========================================================= */
+        /* 6. POP-UP MODALS (FOUNDATION)                             */
+        /* (The dark background and main white box for all menus)    */
+        /* ========================================================= */
         .driver-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 22px; border-radius: 16px; z-index: 2000; box-shadow: 0 14px 40px rgba(0,0,0,0.5); background: #ffffff !important; border: 4px solid #1c1c1e; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 1999; }
-        
         .modal-title { font-size: 1.15rem; font-weight: 900; margin-bottom: 16px; text-align: center; display: block; border-bottom: 2px solid #e5e5ea; padding-bottom: 8px; color: #1c1c1e; text-transform: uppercase; letter-spacing: 0.5px; }
         .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        
         .grid-options button { font-weight: 900 !important; font-size: 1.12rem; padding: 18px 10px; border-radius: 12px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .grid-options button:active { filter: brightness(0.85); }
         .full-width-btn { grid-column: span 2; } 
 
+        /* ========================================================= */
+        /* 7. SPECIFIC POP-UP MENUS (FLAG, UTILITY, CAMERAS, ETC.)   */
+        /* ========================================================= */
         .flag-grid { width: 345px; max-height: 90vh; overflow-y: auto; }
         .btn-flag-cardinal { background: #ff3b30 !important; color: #ffffff !important; border: 3px solid #ff3b30; }
         .btn-flag-corner { background: #34c759 !important; color: #ffffff !important; border: 3px solid #34c759; } 
@@ -96,6 +116,10 @@
         .btn-submit-sugg { background: #007aff; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
         .btn-cancel-sugg { background: #e5e5ea; color: #1c1c1e; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: 900; font-size: 0.95rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
 
+        /* ========================================================= */
+        /* 8. CHAT & LOGS INTERFACE                                  */
+        /* (The tabs and the list of incoming messages)              */
+        /* ========================================================= */
         .chat-log-grid { width: 360px; max-height: 80vh; display: flex; flex-direction: column; padding: 16px; }
         .chat-tab-bar { display: flex; gap: 6px; margin-bottom: 12px; }
         .chat-tab-btn { flex: 1; padding: 12px 4px; font-weight: 900; font-size: 0.85rem; border-radius: 8px; cursor: pointer; text-transform: uppercase; text-align: center; border: 2px solid transparent; }
@@ -111,6 +135,10 @@
         .chat-log-item span.time-badge { font-size: 0.72rem; color: #8e8e93; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; }
         .chat-empty-msg { text-align: center; color: #8e8e93; font-weight: bold; font-size: 0.95rem; padding-top: 40px; text-transform: uppercase; }
 
+        /* ========================================================= */
+        /* 9. SHIFT MANAGEMENT & ADMIN CONTROLS                      */
+        /* (Profile input, logging off, and admin status)            */
+        /* ========================================================= */
         .shift-modal-grid { width: 345px; max-height: 95vh; overflow-y: auto; }
         .profile-input-field { width: 100%; padding: 10px; font-size: 1rem; font-weight: 700; border-radius: 8px; border: 2px solid #1c1c1e; margin: 6px 0 12px 0; font-family: inherit; background: #f2f2f7; }
         .profile-select-field { width: 100%; padding: 10px; font-size: 1rem; font-weight: 900; border-radius: 8px; border: 2px solid #1c1c1e; margin: 6px 0 12px 0; font-family: inherit; background: #ffd100; color: #000; }
@@ -130,6 +158,10 @@
         .complete-desc { font-size: 1.1rem; color: #48484a; font-weight: bold; line-height: 1.4; margin-bottom: 25px; }
         .btn-restart-app { background: #1c1c1e; color: #ffd100; border: 3px solid #ffd100; padding: 14px 28px; font-weight: 900; font-size: 1.1rem; border-radius: 10px; cursor: pointer; text-transform: uppercase; }
 
+        /* ========================================================= */
+        /* 10. DRIVER MATCHING SYSTEM                                */
+        /* (Availability calendars and lists of perfect matches)     */
+        /* ========================================================= */
         .matching-grid { width: 375px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; padding: 16px; }
         .match-card-info { background: #f2f2f7; border: 2px solid #af52de; border-radius: 10px; padding: 10px; font-size: 0.85rem; color: #1c1c1e; margin-bottom: 12px; font-weight: 700; }
         .match-input-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: space-between; }
