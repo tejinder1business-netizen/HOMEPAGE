@@ -918,53 +918,66 @@
         // =========================================================================================
         // NEW HIVE-MQ NETWORKING ENGINE WEB SOCKETS
         // =========================================================================================
-        function initializeWebSocketConnection() {
-            if (mqttClient && mqttClient.isConnected()) return;
+        /* ========================================================= */
+/* UPDATED MQTT NETWORKING ENGINE WITH DEBUGGING             */
+/* ========================================================= */
 
-            // Generate a unique client ID for this connection
-            const clientId = "drv_" + (driverProfileMemory.uid || Math.random().toString(16).slice(2, 10));
-            
-            // Connect to public HiveMQ WebSocket server
-           // Ensure these match EXACTLY in your code
-mqttClient = new Paho.MQTT.Client("broker.hivemq.com", Number(8884), "/mqtt", clientId);
+function initializeWebSocketConnection() {
+    if (mqttClient && mqttClient.isConnected()) return;
 
-            mqttClient.onConnectionLost = function(responseObject) {
-                if (isShiftActive && !driverProfileMemory.isSuspended) {
-                    setTimeout(initializeWebSocketConnection, 5000);
-                }
-            };
+    // Generate a unique client ID for this connection
+    const clientId = "drv_" + (driverProfileMemory.uid || Math.random().toString(16).slice(2, 10));
+    
+    // Connect to public HiveMQ WebSocket server
+    mqttClient = new Paho.MQTT.Client("broker.hivemq.com", Number(8884), "/mqtt", clientId);
 
-            mqttClient.onMessageArrived = function(message) {
-                try {
-                    const minPayload = JSON.parse(message.payloadString);
-                    
-                    if (minPayload.u === driverProfileMemory.uid) return; // Ignore our own messages
-                    
-                    const incomingPackage = {
-                        senderUid: minPayload.u,
-                        category: minPayload.c,
-                        subType: minPayload.s,
-                        coordinates: [minPayload.x, minPayload.y],
-                        address: minPayload.a,
-                        textString: minPayload.t,
-                        dir: minPayload.d
-                    };
-                    
-                    handleRemoteMarkerInjection(incomingPackage);
-                } catch (err) {}
-            };
-
-            mqttClient.connect({
-                useSSL: true,
-                onSuccess: function() {
-                    // Subscribe to a shared companion app channel
-                    mqttClient.subscribe("appwall/taxi/network");
-                },
-                onFailure: function(e) {
-                    setTimeout(initializeWebSocketConnection, 5000);
-                }
-            });
+    mqttClient.onConnectionLost = function(responseObject) {
+        console.warn("MQTT Connection Lost. Attempting to reconnect...");
+        if (responseObject.errorCode !== 0) {
+            console.error("Lost Connection Reason: " + responseObject.errorMessage);
         }
+        if (isShiftActive && !driverProfileMemory.isSuspended) {
+            setTimeout(initializeWebSocketConnection, 5000);
+        }
+    };
+
+    mqttClient.onMessageArrived = function(message) {
+        try {
+            const minPayload = JSON.parse(message.payloadString);
+            
+            if (minPayload.u === driverProfileMemory.uid) return; // Ignore our own messages
+            
+            const incomingPackage = {
+                senderUid: minPayload.u,
+                category: minPayload.c,
+                subType: minPayload.s,
+                coordinates: [minPayload.x, minPayload.y],
+                address: minPayload.a,
+                textString: minPayload.t,
+                dir: minPayload.d
+            };
+            
+            handleRemoteMarkerInjection(incomingPackage);
+        } catch (err) {
+            console.error("MQTT Message Parsing Error: ", err);
+        }
+    };
+
+    mqttClient.connect({
+        useSSL: true,
+        onSuccess: function() {
+            console.log("SUCCESS: Connected to HiveMQ Broker!");
+            // Subscribe to a shared companion app channel
+            mqttClient.subscribe("appwall/taxi/network");
+        },
+        onFailure: function(err) {
+            console.error("CRITICAL FAILURE: MQTT Connection Failed!");
+            console.error("Reason: " + err.errorMessage);
+            // Retry every 5 seconds
+            setTimeout(initializeWebSocketConnection, 5000);
+        }
+    });
+}
 
         /* ========================================================= */
         /* MQTT NETWORK BROADCASTER & DATA COMPRESSOR                */
