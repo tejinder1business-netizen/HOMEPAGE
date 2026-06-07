@@ -467,6 +467,10 @@
         </div>
     </div>
 
+    //==================================================================
+    //   APP FOUNDATION
+    //==================================================================
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Core Status States
@@ -545,6 +549,10 @@
             });
         }
 
+        //==================================================================
+        //   DRIVER PROFILE REGESTRATION BRAIN
+        //==================================================================
+
         function syncCompanyDropdownUIFields() {
             const profileSelect = document.getElementById('driver-company-select');
             const matchSelect = document.getElementById('match-company-target-select');
@@ -572,6 +580,10 @@
                 }
             }
         }
+
+        //==================================================================
+        //   START SHIFT AFTER FILLING PROFILE BRAIN
+        //==================================================================
 
         function autoStartDefaultShift() {
             const now = new Date();
@@ -623,6 +635,10 @@
             autoStartDefaultShift();
         });
 
+        //==================================================================
+        //   DRIVER CAR NUMBER DISPLAY AT BOTTOM RIGHT CORNER BRAIN
+        //==================================================================
+
         function updateHudProfileTriggerButtonLabel() {
             const btn = document.getElementById('profile-hud-trigger-btn');
             if (btn) {
@@ -633,6 +649,10 @@
                 }
             }
         }
+
+        //==================================================================
+        //   DRIVER PROFILE REGESTRATION CARD AND MEMORY BRAIN
+        //==================================================================
 
         function toggleProfileModalFieldsDisplay(isAnchored) {
             const fieldsWrapper = document.getElementById('profile-setup-fields-wrapper');
@@ -647,6 +667,10 @@
                 identityHud.style.display = 'none';
             }
         }
+
+        //==================================================================
+        //   DRIVER SUSPENSION BRAIN
+        //==================================================================
 
         function openFullProfileSettings() {
             if (driverProfileMemory.isSuspended) return;
@@ -667,10 +691,18 @@
             showModal('shift-scheduler-pop');
         }
 
+        //==================================================================
+        //   DRIVER SUSPENSION GATEKEEPER BRAIN
+        //==================================================================
+
         function forceExpandProfileEditor() {
             document.getElementById('profile-setup-fields-wrapper').style.display = 'block';
             document.getElementById('profile-saved-identity-hud').style.display = 'none';
         }
+
+        //==================================================================
+        //   DRIVER PROFILE REGESTRATION SAVE ADJUSTMENTS BUTTON BRAIN
+        //==================================================================
 
         function saveProfileAdjustmentsDirectly() {
             const companyVal = document.getElementById('driver-company-select').value.trim();
@@ -696,6 +728,10 @@
             hideModals();
         }
 
+        //==================================================================
+        //   MAP ZOOM OUT ZOOM IN BUTTONS DISAPERANCE BRAIN
+        //==================================================================
+
         function showZoomControlsTemporarily() {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
             const zoomBox = document.getElementById('dynamic-zoom-box');
@@ -703,6 +739,10 @@
             clearTimeout(zoomVisibilityTimeout);
             zoomVisibilityTimeout = setTimeout(() => { zoomBox.classList.remove('zoom-visible'); }, 4000);
         }
+
+        //==================================================================
+        //   MAP ZOOM OUT ZOOM IN BUTTONS INTRACTION WITH THE MAP BRAIN
+        //==================================================================
 
         function executeManualZoomAction(direction) {
             showZoomControlsTemporarily();
@@ -714,6 +754,10 @@
 
         map.on('zoomstart touchmove movestart pinchstart', function() { showZoomControlsTemporarily(); });
         map.on('zoomend', function() { preferredZoomDepth = map.getZoom(); });
+
+        //==================================================================
+        //   DRIVER SHIFT START MASTER GATEKEEPER BRAIN
+        //==================================================================
 
         function initializeDriverShiftTimer() {
             if (!isProfileDataAnchored) {
@@ -757,10 +801,18 @@
             document.getElementById('screen-overlay').style.display = 'none';
         }
 
+        //==================================================================
+        //   DRIVER SHIFT END ENFORCER BRAIN
+        //==================================================================
+
         function checkShiftTimeExpirationStatus() {
             if (!isShiftActive || !targetShiftEndTimestamp) return;
             if (Date.now() >= targetShiftEndTimestamp) { shutDownActiveAppSession(); }
         }
+
+        //==================================================================
+        //   DRIVER SHIFT END FINAL SHUTDOWN BRAIN
+        //==================================================================
 
         function shutDownActiveAppSession() {
             isShiftActive = false;
@@ -786,6 +838,10 @@
             restartBtn.style.display = "block"; restartBtn.innerText = "Start New Shift";
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
+
+        //==================================================================
+        //   DRIVER SHIFT START BRAIN
+        //==================================================================
 
         function restartAppSession() {
             document.getElementById('shift-complete-screen').style.display = 'none';
