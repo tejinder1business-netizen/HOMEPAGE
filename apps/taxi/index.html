@@ -806,9 +806,14 @@ if (!isProfileDataAnchored) {
                 vehicleMarker = L.marker(vehiclePos, { icon: generateDynamicTaxiIcon() }).addTo(map);
             }
 
-            initializeWebSocketConnection();
-            document.getElementById('shift-scheduler-pop').style.display = 'none';
-            document.getElementById('screen-overlay').style.display = 'none';
+           
+
+    initializeWebSocketConnection();
+    
+   
+    document.getElementById('shift-scheduler-pop').style.display = 'none';
+    document.getElementById('screen-overlay').style.display = 'none';
+}
         }
 
         //==================================================================
