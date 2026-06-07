@@ -153,32 +153,53 @@
 <body> 
 
     <div id="map"></div> 
+    <!--===========================================================-->
+    <!--  ZOOM BUTTON FOR THE MAP                                  -->
+    <!--===========================================================-->
 
     <div id="dynamic-zoom-box" class="dynamic-zoom-container">
         <button class="custom-zoom-btn" onclick="executeManualZoomAction(1)">+</button>
         <button class="custom-zoom-btn" onclick="executeManualZoomAction(-1)">-</button>
     </div>
 
+    <!--===========================================================-->
+    <!--  FLAG AND POLICE BUTTON ON THE TOP                        -->
+    <!--===========================================================-->
     <div class="top-actions">
         <button class="action-btn btn-flag" onclick="showModal('flag-pop')">🔴<br><span>FLAG</span></button>
         <button class="action-btn btn-police" onclick="showModal('police-pop')">👮<br><span>POLICE</span></button>
     </div> 
+    <!--===========================================================-->
+    <!--  MENU BUTTON AT BOTTOM                                    -->
+    <!--===========================================================-->
 
     <div class="bottom-actions">
         <button class="action-btn btn-main-menu" onclick="showModal('utility-menu-pop')">📋<br><span>MENU</span></button>
     </div>
-
+<!--===========================================================-->
+<!--  AUDIO MUTE BUTTON                                        -->
+<!--===========================================================-->
     <div class="side-util left-side">
         <button id="mute-toggle-btn" class="util-circle" onclick="handleMuteToggle()">AUDIO<br>ON</button>
     </div>
-    
+
+    <!--===========================================================-->
+    <!-- MAP LOCK BUTTON                                           -->
+    <!--===========================================================-->
     <div class="right-side-center">
         <button id="lock-center-btn" class="util-circle active-center" onclick="handleRecenter()">MAP<br>LOCKED</button>
     </div> 
+    <!--===========================================================-->
+    <!--  PROFILE BUTTON AT BOTTOM RIGHT                           -->
+    <!--===========================================================-->
 
     <div class="right-side-bottom">
         <button id="profile-hud-trigger-btn" class="util-circle profile-hud-btn" onclick="openFullProfileSettings()">DRV<br>#342</button>
     </div>
+
+     <!--===========================================================-->
+     <!--  DRIVER PROFILE INFORMATION POP UP WINDOW                 -->
+     <!--===========================================================-->  
 
     <div id="screen-overlay" class="modal-overlay" onclick="hideModals()"></div> 
 
@@ -225,17 +246,16 @@
         <button id="profile-submit-action-btn" class="btn-confirm-shift" onclick="initializeDriverShiftTimer()">Go On Duty</button>
         <button id="profile-close-action-btn" class="btn-close-cam" style="display: none; margin-top: 10px;" onclick="hideModals()">Close Settings</button>
     </div>
-                                  <!--============================================================================-->
+    <!--============================================================================-->
 
-                                              <!-- THIS IS UTILITY PANEL -->
+    <!-- THIS IS MENU BUTTON                                                        -->
 
-                                  <!--============================================================================-->
+    <!--============================================================================-->
     <div id="utility-menu-pop" class="driver-modal utility-menu-grid">
         <span class="modal-title">Utility Panel</span>
         <div class="grid-options">
             <button class="btn-caution-menu full-width-btn" onclick="openCautionSelectionFromMenu()">👷 HAZARD</button>
             <button class="btn-matching-menu full-width-btn" onclick="openDriverMatchingPortal()">👥 DRIVER MATCHING</button>
-            
             <button class="btn-cameras-menu full-width-btn" onclick="openCamerasFromMenu()">📷 CAMERAS</button>
             <button class="btn-replay-menu full-width-btn" onclick="triggerReplayFromMenu()">🔊 REPEAT</button>
             <button class="btn-logs-menu full-width-btn" onclick="openChatLogHistoryMenuFromMenu()">💬 LOG BOOK</button>
@@ -245,6 +265,11 @@
             <button id="pwa-install-btn" class="btn-cameras-menu full-width-btn" style="display:none; background:#00ffff!important; color:#000!important;" onclick="triggerPwaInstall()">📲 INSTALL PWA APP</button>
         </div>
         <button class="btn-close-cam" onclick="hideModals()">Close Menu</button>
+
+     <!--===========================================================-->
+     <!--  DRIVER MATCHING BUTTON                                   -->
+     <!--===========================================================-->  
+
     </div>
 
     <div id="driver-matching-pop" class="driver-modal matching-grid">
@@ -286,6 +311,11 @@
         <button class="btn-close-cam" onclick="backToUtilityMenu('driver-matching-pop')">Back</button>
     </div>
 
+     <!--===========================================================-->
+     <!-- ADMIN PORTAL BUTTON                                       -->
+     <!--===========================================================-->  
+
+
     <div id="admin-control-pop" class="driver-modal admin-grid">
         <span class="modal-title">Admin Management</span>
         <div class="admin-status-card">
@@ -299,6 +329,9 @@
         </div>
         <button class="btn-close-cam" onclick="backToUtilityMenu('admin-control-pop')">Back</button>
     </div>
+     <!--===========================================================-->
+     <!--  LOG BOOK BUTTON                                          -->
+     <!--===========================================================-->  
 
     <div id="chat-log-pop" class="driver-modal chat-log-grid">
         <span class="modal-title">Live Active Logs</span>
@@ -311,12 +344,22 @@
         <button class="btn-close-cam" onclick="backToUtilityMenu('chat-log-pop')">Back</button>
     </div>
 
+     <!--===========================================================-->
+     <!--  DRIVER FEEDBACK BUTTON                                   -->
+     <!--===========================================================-->  
+
+
     <div id="suggestion-pop" class="driver-modal suggestion-grid">
         <span class="modal-title">Driver Suggestion</span>
         <textarea id="driver-suggestion-text" class="suggestion-input" placeholder="Type your request, route issue, or feature idea here..."></textarea>
         <button class="btn-submit-sugg" onclick="submitDriverSuggestion()">Submit Idea</button>
         <button class="btn-cancel-sugg" onclick="backToUtilityMenu('suggestion-pop')">Back</button>
     </div>
+
+     <!--===========================================================-->
+     <!--  CAMERA BUTTON                                            -->
+     <!--===========================================================-->  
+
 
     <div id="camera-menu-pop" class="driver-modal cam-list-grid">
         <span class="modal-title">Street View Cameras</span>
@@ -337,6 +380,10 @@
         <button class="btn-close-cam" onclick="backToUtilityMenu('camera-menu-pop')">Back</button>
     </div> 
 
+     <!--===========================================================-->
+     <!--  FLAG POP BUTTON                                          -->
+     <!--===========================================================-->  
+
     <div id="flag-pop" class="driver-modal flag-grid">
         <span class="modal-title">Drop Flag Intersection</span>
         <div class="grid-options">
@@ -354,6 +401,11 @@
         </div>
     </div> 
 
+     <!--===========================================================-->
+     <!--  HAZARD BUTTON                                            -->
+     <!--===========================================================-->  
+
+
     <div id="caution-type-pop" class="driver-modal caution-grid">
         <span class="modal-title">Caution Condition</span>
         <div class="grid-options">
@@ -364,7 +416,7 @@
         </div>
         <button class="btn-close-cam" onclick="backToUtilityMenu('caution-type-pop')" style="margin-top:14px;">Back</button>
     </div> 
-
+    
     <div id="caution-dir-pop" class="driver-modal caution-grid">
         <span class="modal-title">Caution Direction</span>
         <div class="grid-options">
@@ -375,6 +427,11 @@
             <button class="btn-caution-opt fill-width-btn" onclick="dropCautionMarker('All Directions')">All Directions</button>
         </div>
     </div> 
+
+     <!--===========================================================-->
+     <!-- POLICE POP UP BUTTON                                      -->
+     <!--===========================================================-->  
+
 
     <div id="police-pop" class="driver-modal police-grid">
         <span class="modal-title">Police Threat Zone</span>
@@ -395,6 +452,11 @@
             <button class="btn-police-opt fill-width-btn" onclick="dropPoliceMarker('All Directions')">All Directions</button>
         </div>
     </div> 
+
+     <!--===========================================================-->
+     <!--  SHIFT COMPLETE LOGIC                                     -->
+     <!--===========================================================-->  
+
 
     <div id="shift-complete-screen">
         <div class="complete-card">
