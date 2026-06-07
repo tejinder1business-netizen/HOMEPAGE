@@ -1198,45 +1198,68 @@
 
 
 
-       //==================================================================
-      // [ZONE: APP FOUNDATION, INITIALIZATION & LAUNCH GUARD]
-     //==================================================================
-window.addEventListener('DOMContentLoaded', () => {
-    const now = new Date();
-    now.setHours(now.getHours() + 8);
-    const defaultTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('shift-end-time-input').value = defaultTimeStr;
-    
-    syncCompanyDropdownUIFields();
-    
-    // SETUP EXISTING VALUES
-    document.getElementById('driver-company-select').value = driverProfileMemory.company;
-    document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
-    document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
-    document.getElementById('driver-role-select').value = driverProfileMemory.role;
-    document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
-    document.getElementById('match-company-target-select').value = driverProfileMemory.company;
-    document.getElementById('match-calendar-date').value = new Date().toISOString().split('T')[0];
-    
-    if (driverProfileMemory.company && driverProfileMemory.carNumber && driverProfileMemory.displayName) {
-        isProfileDataAnchored = true;
-        toggleProfileModalFieldsDisplay(true);
-    } else {
-        isProfileDataAnchored = false;
-        toggleProfileModalFieldsDisplay(false);
-    }
-    
-    updateHudProfileTriggerButtonLabel();
+        window.addEventListener('DOMContentLoaded', () => {
 
-    // --- LAUNCH GUARD: Force Profile if not anchored ---
-    if (!isProfileDataAnchored) {
-        document.getElementById('screen-overlay').style.display = 'block';
-        document.getElementById('shift-scheduler-pop').style.display = 'block';
-    } else {
-        // Only auto-start if we already have a profile
-        autoStartDefaultShift();
-    }
-});
+            const now = new Date();
+
+            now.setHours(now.getHours() + 8);
+
+            const defaultTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            document.getElementById('shift-end-time-input').value = defaultTimeStr;
+
+            
+
+            syncCompanyDropdownUIFields();
+
+            
+
+            document.getElementById('driver-company-select').value = driverProfileMemory.company;
+
+            document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
+
+            document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
+
+            document.getElementById('driver-role-select').value = driverProfileMemory.role;
+
+            document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
+
+            document.getElementById('match-company-target-select').value = driverProfileMemory.company;
+
+            document.getElementById('match-calendar-date').value = new Date().toISOString().split('T')[0];
+
+            
+
+            if (driverProfileMemory.company && driverProfileMemory.carNumber && driverProfileMemory.displayName) {
+
+                isProfileDataAnchored = true;
+
+                toggleProfileModalFieldsDisplay(true);
+
+            } else {
+
+                isProfileDataAnchored = false;
+
+                toggleProfileModalFieldsDisplay(false);
+
+            }
+
+            
+
+            updateHudProfileTriggerButtonLabel();
+
+            
+
+            document.getElementById('screen-overlay').style.display = 'none';
+
+            document.getElementById('shift-scheduler-pop').style.display = 'none';
+
+
+
+            autoStartDefaultShift();
+
+        });
+
 
 
         //==================================================================
@@ -1561,15 +1584,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-           // ... (rest of the function code) ...
-    initializeWebSocketConnection();
-    
-    // Force modals closed so we see the map
-    document.getElementById('shift-scheduler-pop').style.display = 'none';
-    document.getElementById('screen-overlay').style.display = 'none';
-}
+            initializeWebSocketConnection();
 
-        
+            document.getElementById('shift-scheduler-pop').style.display = 'none';
+
+            document.getElementById('screen-overlay').style.display = 'none';
+
+        }
 
 
 
@@ -2894,4 +2915,3 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html> 
-
