@@ -629,10 +629,20 @@
             
             updateHudProfileTriggerButtonLabel();
             
-            document.getElementById('screen-overlay').style.display = 'none';
-            document.getElementById('shift-scheduler-pop').style.display = 'none';
-
-            autoStartDefaultShift();
+           // NEW LAUNCH GUARD LOGIC
+if (!isProfileDataAnchored) {
+    // Show the profile setup modal
+    document.getElementById('screen-overlay').style.display = 'block';
+    document.getElementById('shift-scheduler-pop').style.display = 'block';
+    // Ensure "Go On Duty" is the button action
+    document.getElementById('profile-submit-action-btn').innerText = "Go On Duty";
+    document.getElementById('profile-submit-action-btn').setAttribute('onclick', 'initializeDriverShiftTimer()');
+} else {
+    // Profile exists, start the shift automatically
+    autoStartDefaultShift();
+    document.getElementById('screen-overlay').style.display = 'none';
+    document.getElementById('shift-scheduler-pop').style.display = 'none';
+}
         });
 
         //==================================================================
