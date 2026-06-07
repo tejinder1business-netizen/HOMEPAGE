@@ -426,6 +426,12 @@
         <button class="btn-close-cam" onclick="backToUtilityMenu('camera-menu-pop')">Back</button>
     </div> 
 
+                                   <!--==============================================================================-->
+               
+                                                        <!--   DROP FLAG  -->
+    
+                                   <!--==============================================================================-->
+
     <div id="flag-pop" class="driver-modal flag-grid">
         <span class="modal-title">Drop Flag Intersection</span>
         <div class="grid-options">
@@ -443,6 +449,13 @@
         </div>
     </div> 
 
+                                   <!--==============================================================================-->
+               
+                                                        <!--   HAZARD BUTTON  -->
+    
+                                   <!--==============================================================================-->
+
+
     <div id="caution-type-pop" class="driver-modal caution-grid">
         <span class="modal-title">Caution Condition</span>
         <div class="grid-options">
@@ -454,6 +467,14 @@
         <button class="btn-close-cam" onclick="backToUtilityMenu('caution-type-pop')" style="margin-top:14px;">Back</button>
     </div> 
 
+                                   <!--==============================================================================-->
+               
+                                                        <!--   HAZARD BUTTONS  -->
+    
+                                   <!--==============================================================================-->
+
+
+   
     <div id="caution-dir-pop" class="driver-modal caution-grid">
         <span class="modal-title">Caution Direction</span>
         <div class="grid-options">
@@ -464,6 +485,13 @@
             <button class="btn-caution-opt fill-width-btn" onclick="dropCautionMarker('All Directions')">All Directions</button>
         </div>
     </div> 
+
+
+                                   <!--==============================================================================-->
+               
+                                                        <!--   POLICE BUTTON  -->
+    
+                                   <!--==============================================================================-->
 
     <div id="police-pop" class="driver-modal police-grid">
         <span class="modal-title">Police Threat Zone</span>
@@ -485,6 +513,12 @@
         </div>
     </div> 
 
+
+                                   <!--==============================================================================-->
+               
+                                                        <!--   END SHIFT BUTTON  -->
+    
+                                   <!--==============================================================================-->
     <div id="shift-complete-screen">
         <div class="complete-card">
             <div class="complete-icon" id="status-screen-emoji">🏁</div>
@@ -495,6 +529,11 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    /* ========================================================= */
+    /* CORE STATUS STATES & MEMORY                 */
+    /* ========================================================= */
+    
     <script>
         // Core Status States
         let vehiclePos = null;
@@ -506,6 +545,10 @@
         
         let preferredZoomDepth = 17; 
         let zoomVisibilityTimeout = null;
+
+        /* ========================================================= */
+        /* DATABASES & PROFILE MEMORY                                */
+        /* ========================================================= */
 
         // NEW MQTT CLIENT VAR
         let mqttClient = null;
@@ -519,7 +562,7 @@
 
         let driverProfileMemory = {
             uid: "", company: "Yellow Cab Company Private Limited", carNumber: "342",
-            displayName: "Jaswell", isSuspended: false, role: "Driver", phoneNumber: ""
+            displayName: "Jaswal", isSuspended: false, role: "Driver", phoneNumber: ""
         };
 
         let isProfileDataAnchored = false;
@@ -547,6 +590,10 @@
         let targetShiftEndTimestamp = null;
         let shiftMonitoringInterval = null;
         let isShiftActive = false;
+
+        /* ========================================================= */
+        /* DYNAMIC MARKERS & UI SYNCING                              */
+        /* ========================================================= */
 
         function generateDynamicTaxiIcon() {
             let markerLabel = "TAXI";
@@ -586,6 +633,10 @@
             matchSelect.innerHTML = matchOptionsHtml;
         }
 
+        /* ========================================================= */
+        /* CUSTOM COMPANY REGISTRATION LOGIC                         */
+        /* ========================================================= */
+
         function handleCompanySelectionFramework(selectElement) {
             if (selectElement.value === "__ADD_NEW_COMPANY__") {
                 const customFirmName = prompt("ENTER FORMAL REGISTERED NAME FOR YOUR NEW TAXI COMPANY:");
@@ -599,6 +650,10 @@
                 }
             }
         }
+
+        /* ========================================================= */
+        /* APP INITIALIZATION & DEFAULT SHIFT ENGINE                 */
+        /* ========================================================= */
 
         function autoStartDefaultShift() {
             const now = new Date();
@@ -650,6 +705,10 @@
             autoStartDefaultShift();
         });
 
+        /* ========================================================= */
+        /* DYNAMIC UI BUTTON UPDATERS                                */
+        /* ========================================================= */
+
         function updateHudProfileTriggerButtonLabel() {
             const btn = document.getElementById('profile-hud-trigger-btn');
             if (btn) {
@@ -660,6 +719,10 @@
                 }
             }
         }
+
+        /* ========================================================= */
+        /* PROFILE UI STATE TOGGLER                                  */
+        /* ========================================================= */
 
         function toggleProfileModalFieldsDisplay(isAnchored) {
             const fieldsWrapper = document.getElementById('profile-setup-fields-wrapper');
@@ -674,6 +737,9 @@
                 identityHud.style.display = 'none';
             }
         }
+        /* ========================================================= */
+        /* PROFILE EDITOR MODE SWITCHER                              */
+        /* ========================================================= */
 
         function openFullProfileSettings() {
             if (driverProfileMemory.isSuspended) return;
@@ -694,11 +760,19 @@
             showModal('shift-scheduler-pop');
         }
 
+
+        /* ========================================================= */
+        /* QUICK PROFILE EDIT OVERRIDE                               */
+        /* ========================================================= */
         function forceExpandProfileEditor() {
             document.getElementById('profile-setup-fields-wrapper').style.display = 'block';
             document.getElementById('profile-saved-identity-hud').style.display = 'none';
         }
 
+
+        /* ========================================================= */
+        /* PROFILE ADJUSTMENT SAVE ENGINE                            */
+        /* ========================================================= */
         function saveProfileAdjustmentsDirectly() {
             const companyVal = document.getElementById('driver-company-select').value.trim();
             const carVal = document.getElementById('driver-car-input').value.trim();
@@ -723,6 +797,10 @@
             hideModals();
         }
 
+        /* ========================================================= */
+        /* AUTO-HIDING MAP ZOOM CONTROLS                             */
+        /* ========================================================= */
+
         function showZoomControlsTemporarily() {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
             const zoomBox = document.getElementById('dynamic-zoom-box');
@@ -730,6 +808,10 @@
             clearTimeout(zoomVisibilityTimeout);
             zoomVisibilityTimeout = setTimeout(() => { zoomBox.classList.remove('zoom-visible'); }, 4000);
         }
+
+        /* ========================================================= */
+        /* MANUAL MAP ZOOM BOTTON DISAPERANCE ENGINE                                    */
+        /* ========================================================= */
 
         function executeManualZoomAction(direction) {
             showZoomControlsTemporarily();
@@ -741,6 +823,10 @@
 
         map.on('zoomstart touchmove movestart pinchstart', function() { showZoomControlsTemporarily(); });
         map.on('zoomend', function() { preferredZoomDepth = map.getZoom(); });
+
+        /* ========================================================= */
+        /* MANUAL SHIFT STARTER & CLOCK-IN ENGINE                    */
+        /* ========================================================= */
 
         function initializeDriverShiftTimer() {
             if (!isProfileDataAnchored) {
@@ -784,10 +870,17 @@
             document.getElementById('screen-overlay').style.display = 'none';
         }
 
+        /* ========================================================= */
+        /* SHIFT TIMER EXPIRATION MONITOR                            */
+        /* ========================================================= */
         function checkShiftTimeExpirationStatus() {
             if (!isShiftActive || !targetShiftEndTimestamp) return;
             if (Date.now() >= targetShiftEndTimestamp) { shutDownActiveAppSession(); }
         }
+
+        /* ========================================================= */
+        /* SIGN-OFF SEQUENCE & APP KILL SWITCH                       */
+        /* ========================================================= */
 
         function shutDownActiveAppSession() {
             isShiftActive = false;
@@ -814,6 +907,10 @@
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
 
+        /* ========================================================= */
+        /* APP SESSION RESTART ENGINE                                */
+        /* ========================================================= */
+
         function restartAppSession() {
             document.getElementById('shift-complete-screen').style.display = 'none';
             audioMuted = false;
@@ -831,7 +928,7 @@
         }
 
         // =========================================================================================
-        // NEW HIVE-MQ NETWORKING ENGINE (Replaces old PieSocket WebSockets)
+        // NEW HIVE-MQ NETWORKING ENGINE WEB SOCKETS
         // =========================================================================================
         function initializeWebSocketConnection() {
             if (mqttClient && mqttClient.isConnected()) return;
@@ -880,6 +977,10 @@
             });
         }
 
+        /* ========================================================= */
+        /* MQTT NETWORK BROADCASTER & DATA COMPRESSOR                */
+        /* ========================================================= */
+
         function broadcastPayloadToPeerDevices(payloadObject) {
             if (!mqttClient || !mqttClient.isConnected()) return;
             
@@ -898,6 +999,10 @@
             message.destinationName = "appwall/taxi/network";
             mqttClient.send(message);
         }
+
+        /* ========================================================= */
+        /* LIVE MAP INJECTOR & REMOTE DRAWING ENGINE DROPS THE ACTUAL FLAG EMOGI */
+        /* ========================================================= */
 
         function handleRemoteMarkerInjection(data) {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
@@ -946,6 +1051,10 @@
             }
         }
 
+        /* ========================================================= */
+        /* SMART AUDIO ANNOUNCER & TEXT-TO-SPEECH ENGINE             */
+        /* ========================================================= */
+
         function dispatchRemoteAudioNarration(category, payload, resolvedAddressStr) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return;
             let finalSpeechString = "";
@@ -958,7 +1067,7 @@
                 const speechDirection = payload.direction.toLowerCase();
                 if (payload.type === 'emergency') { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} emergency`; } 
                 else if (payload.type === 'hidden') { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} they are hiding`; } 
-                else { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} Radar Radar`; }
+                else { finalSpeechString = `Remote updates: One police reported ahead ${speechDirection} at ${resolvedAddressStr} Radar Radar Radar`; }
             }
             lastSpokenSpeechString = finalSpeechString;
             const clearHardwareBuffer = new SpeechSynthesisUtterance("");
@@ -970,12 +1079,20 @@
             }, 1500);
         }
 
+
+       /* ========================================================= */
+       /* DRIVER MATCHING PORTAL TRIGGER                            */
+       /* ========================================================= */
         function openDriverMatchingPortal() {
             hideModals(); document.getElementById('match-ui-current-role').innerText = driverProfileMemory.role.toUpperCase();
             document.getElementById('match-ui-current-phone').innerText = driverProfileMemory.phoneNumber || "None Added (Update Profile Setup)";
             syncCompanyDropdownUIFields(); document.getElementById('match-company-target-select').value = driverProfileMemory.company;
             renderMatchingBoardEntries(); showModal('driver-matching-pop');
         }
+
+        /* ========================================================= */
+        /* JOB BOARD SUBMISSION ENGINE                               */
+        /* ========================================================= */
 
         function submitAvailabilityToMatchPool() {
             if (!driverProfileMemory.phoneNumber) { alert("PHONE NUMBER IS REQUIRED IN YOUR DRIVER PROFILE SYSTEM."); hideModals(); openFullProfileSettings(); return; }
@@ -992,6 +1109,10 @@
             mockSharedMatchingPool.push(newCalendarItem); renderMatchingBoardEntries();
             alert(`SUCCESS: Availability logged!`);
         }
+
+        /* ========================================================= */
+        /* JOB BOARD RENDERING ENGINE & SMART FILTER                 */
+        /* ========================================================= */
 
         function renderMatchingBoardEntries() {
             const driversContainer = document.getElementById('matching-drivers-column-target'); const carsContainer = document.getElementById('matching-cars-column-target');
@@ -1018,6 +1139,10 @@
             if (carCount === 0) { carsContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Cars</div>`; }
         }
 
+        /* ========================================================= */
+        /* DISPATCH & ADMIN OVERRIDE SECURE PORTAL                   */
+        /* ========================================================= */
+
         function accessAdminControlPortal() {
             hideModals(); const challengeCode = prompt("ENTER CONFIDENTIAL ADMINISTRATIVE DISPATCH PASSCODE:");
             if (challengeCode === null) return;
@@ -1028,6 +1153,10 @@
                 showModal('admin-control-pop');
             } else { alert("ACCESS DENIED."); }
         }
+
+        /* ========================================================= */
+        /* ADMIN SUSPENSION ENFORCEMENT ENGINE                       */
+        /* ========================================================= */
 
         function executeAdminSuspensionAction() {
             const verification = confirm(`CONFIRM ENFORCEMENT: Place driver "${driverProfileMemory.displayName}" on a suspension time out session immediately?`);
@@ -1046,6 +1175,10 @@
             document.getElementById('status-screen-btn').style.display = "none"; 
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
+
+        /* ========================================================= */
+        /* UTILITY ROUTING & LIVE GPS TRACKING ENGINE                */
+        /* ========================================================= */
 
         function openCautionSelectionFromMenu() { hideModals(); showModal('caution-type-pop'); }
         function openCamerasFromMenu() { hideModals(); showModal('camera-menu-pop'); }
@@ -1072,6 +1205,10 @@
         setInterval(() => { if (trackVehicleView && vehiclePos && !driverProfileMemory.isSuspended) { map.setView(vehiclePos, preferredZoomDepth); } }, 2000);
         map.on('dragstart', function() { if (!isShiftActive) return; trackVehicleView = false; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle"; btn.innerHTML = "MAP<br>FREE"; }); 
 
+
+        /* ========================================================= */
+        /* REVERSE GEOCODING & STREET ADDRESS TRANSLATOR             */
+        /* ========================================================= */
         function fetchAddressFromCoordinates(latlng, forcedCallback = null) {
             let distanceMoved = 0;
             if (lastGeocodedPos) { distanceMoved = latlng.distanceTo(lastGeocodedPos); } 
@@ -1093,6 +1230,10 @@
                 });
         } 
 
+
+        /* ========================================================= */
+        /* CORE UI CONTROLLERS & UTILITY TOGGLES                     */
+        /* ========================================================= */
         function showModal(id) { if (!isShiftActive && id !== 'shift-scheduler-pop') return; document.getElementById('screen-overlay').style.display = 'block'; document.getElementById(id).style.display = 'block'; } 
         function hideModals() { if (!isShiftActive) return; document.getElementById('screen-overlay').style.display = 'none'; document.querySelectorAll('.driver-modal').forEach(m => m.style.display = 'none'); } 
         function handleRecenter() { if (!isShiftActive || driverProfileMemory.isSuspended) return; trackVehicleView = true; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle active-center"; btn.innerHTML = "MAP<br>LOCKED"; if (vehiclePos) { map.setView(vehiclePos, preferredZoomDepth); } } 
@@ -1101,6 +1242,10 @@
             audioMuted = !audioMuted; const btn = document.getElementById('mute-toggle-btn');
             if(audioMuted) { btn.className = "util-circle active-mute"; btn.innerHTML = "AUDIO<br>MUTED"; } else { btn.className = "util-circle"; btn.innerHTML = "AUDIO<br>ON"; }
         } 
+
+        /* ========================================================= */
+        /* LOCAL FLAG DROPPER & NETWORK BROADCAST ENGINE             */
+        /* ========================================================= */
 
         function dropFlagDirect(selectionValue) {
             if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
@@ -1121,6 +1266,10 @@
                 setTimeout(() => { map.removeLayer(flagMarker); }, 300000); 
             });
         } 
+
+        /* ========================================================= */
+        /* TWO-STEP HAZARD REPORTING & NETWORK BROADCAST             */
+        /* ========================================================= */
 
         function selectCautionType(type) { if (!isShiftActive) return; chosenCautionType = type; hideModals(); showModal('caution-dir-pop'); } 
         function dropCautionMarker(directionValue) {
@@ -1146,6 +1295,10 @@
             });
         } 
 
+        /* ========================================================= */
+        /* TWO-STEP POLICE REPORTING & NETWORK BROADCAST             */
+        /* ========================================================= */
+
         function selectPoliceType(type) { if (!isShiftActive) return; chosenPoliceType = type.toLowerCase().trim(); hideModals(); showModal('police-dir-pop'); } 
         function dropPoliceMarker(directionValue) {
             if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
@@ -1164,6 +1317,10 @@
             });
         } 
 
+        /* ========================================================= */
+        /* NATURAL SPEECH ADDRESS FORMATTER                          */
+        /* ========================================================= */
+
         function breakHouseNumbersIntoCouples(numberStr) {
             if (!numberStr || isNaN(numberStr)) return numberStr;
             if (numberStr.length === 4) {
@@ -1180,6 +1337,10 @@
             } 
             return numberStr;
         } 
+
+        /* ========================================================= */
+        /* LOCAL AUDIO ANNOUNCER & SCRIPTWRITER                      */
+        /* ========================================================= */
 
         function dispatchAudioNarration(category, payload) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return; 
@@ -1207,6 +1368,10 @@
             }, 1500);
         } 
 
+
+        /* ========================================================= */
+        /* AUDIO REPLAY ENGINE                                       */
+        /* ========================================================= */
         function replayLastAudioNarration() {
             if (!isShiftActive || !lastSpokenSpeechString || driverProfileMemory.isSuspended) return;
             const clearHardwareBuffer = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(clearHardwareBuffer); 
@@ -1217,12 +1382,20 @@
             }, 200);
         }
 
+        /* ========================================================= */
+        /* DRIVER FEEDBACK & SUGGESTION SUBMISSION ENGINE            */
+        /* ========================================================= */
+
         function submitDriverSuggestion() {
             if (!isShiftActive) return;
             const field = document.getElementById('driver-suggestion-text'); const note = field.value.trim();
             if (!note) { alert("Please enter a suggestion before submitting."); return; }
             field.value = ""; hideModals(); alert("Thank you! Your suggestion has been recorded.");
         }
+
+        /* ========================================================= */
+        /* HISTORY MENU & TAB CONTROLLER                             */
+        /* ========================================================= */
 
         function openChatLogHistoryMenu() { if (!isShiftActive) return; showModal('chat-log-pop'); switchChatLogTab(activeChatLogTab); }
         function switchChatLogTab(categoryTab) {
@@ -1232,6 +1405,10 @@
             document.getElementById('tab-btn-police').className = "chat-tab-btn" + (categoryTab === 'Police' ? " active-tab-police" : "");
             renderChatLogList();
         }
+
+        /* ========================================================= */
+        /* HISTORICAL LOG DRAWER & MAP JUMPER                        */
+        /* ========================================================= */
 
         function renderChatLogList() {
             const container = document.getElementById('chat-list-target'); container.innerHTML = "";
@@ -1274,6 +1451,10 @@
                 container.appendChild(logCard);
             });
         }
+
+        /* ========================================================= */
+        /* SCREEN WAKE LOCK ENGINE (ANTI-SLEEP MODULE)               */
+        /* ========================================================= */
 
         async function maintainScreenWakeLock() { try { if ('wakeLock' in navigator) { wakeLockToken = await navigator.wakeLock.request('screen'); } } catch (err) {} } 
         window.addEventListener('load', maintainScreenWakeLock); 
