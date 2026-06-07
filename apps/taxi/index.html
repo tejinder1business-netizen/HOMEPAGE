@@ -925,7 +925,8 @@
             const clientId = "drv_" + (driverProfileMemory.uid || Math.random().toString(16).slice(2, 10));
             
             // Connect to public HiveMQ WebSocket server
-            mqttClient = new Paho.MQTT.Client("broker.hivemq.com", Number(8884), "/mqtt", clientId);
+           // Ensure these match EXACTLY in your code
+mqttClient = new Paho.MQTT.Client("broker.hivemq.com", Number(8884), "/mqtt", clientId);
 
             mqttClient.onConnectionLost = function(responseObject) {
                 if (isShiftActive && !driverProfileMemory.isSuspended) {
