@@ -1162,106 +1162,40 @@
 
 
 
-        function autoStartDefaultShift() {
+       
 
-            const now = new Date();
+function autoStartDefaultShift() {
+    const now = new Date();
+    now.setHours(now.getHours() + 12);
+    targetShiftEndTimestamp = now.getTime();
+    isShiftActive = true;
+    driverProfileMemory.isSuspended = false;
 
-            now.setHours(now.getHours() + 12);
+    if (!driverProfileMemory.uid) {
+        driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000);
+    }
 
-            targetShiftEndTimestamp = now.getTime();
+    if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
+    shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
 
-            isShiftActive = true;
+    updateHudProfileTriggerButtonLabel();
+    initializeWebSocketConnection(); 
 
-            driverProfileMemory.isSuspended = false;
+    // FORCE CLEAN UI: Ensure no modals are open
+    hideModals(); 
+}
 
-
-
-            if (!driverProfileMemory.uid) {
-
-                driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000);
-
-            }
-
-
-
-            if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
-
-            shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
-
-
-
-            updateHudProfileTriggerButtonLabel();
-
-            initializeWebSocketConnection(); 
-
-        }
-
-
-
-        window.addEventListener('DOMContentLoaded', () => {
-
-            const now = new Date();
-
-            now.setHours(now.getHours() + 8);
-
-            const defaultTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-            document.getElementById('shift-end-time-input').value = defaultTimeStr;
-
-            
-
-            syncCompanyDropdownUIFields();
-
-            
-
-            document.getElementById('driver-company-select').value = driverProfileMemory.company;
-
-            document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
-
-            document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
-
-            document.getElementById('driver-role-select').value = driverProfileMemory.role;
-
-            document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
-
-            document.getElementById('match-company-target-select').value = driverProfileMemory.company;
-
-            document.getElementById('match-calendar-date').value = new Date().toISOString().split('T')[0];
-
-            
-
-            if (driverProfileMemory.company && driverProfileMemory.carNumber && driverProfileMemory.displayName) {
-
-                isProfileDataAnchored = true;
-
-                toggleProfileModalFieldsDisplay(true);
-
-            } else {
-
-                isProfileDataAnchored = false;
-
-                toggleProfileModalFieldsDisplay(false);
-
-            }
-
-            
-
-            updateHudProfileTriggerButtonLabel();
-
-            
-
-            document.getElementById('screen-overlay').style.display = 'none';
-
-            document.getElementById('shift-scheduler-pop').style.display = 'none';
-
-
-
-            autoStartDefaultShift();
-
-        });
-
-
-
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Sync UI Fields
+    syncCompanyDropdownUIFields();
+    
+    // 2. Hide all modals immediately to prevent "stuck" screens
+    document.getElementById('screen-overlay').style.display = 'none';
+    document.getElementById('shift-scheduler-pop').style.display = 'none';
+    
+    // 3. Launch the shift and go straight to the map
+    autoStartDefaultShift();
+});
         //==================================================================
 
         //   DRIVER CAR NUMBER DISPLAY AT BOTTOM RIGHT CORNER BRAIN
