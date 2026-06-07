@@ -967,17 +967,15 @@ function initializeWebSocketConnection() {
         useSSL: true,
         onSuccess: function() {
             console.log("SUCCESS: Connected to HiveMQ Broker!");
-            // Subscribe to a shared companion app channel
             mqttClient.subscribe("appwall/taxi/network");
         },
         onFailure: function(err) {
             console.error("CRITICAL FAILURE: MQTT Connection Failed!");
             console.error("Reason: " + err.errorMessage);
-            // Retry every 5 seconds
             setTimeout(initializeWebSocketConnection, 5000);
         }
     });
-}
+} // This closing bracket is vital!
 
         /* ========================================================= */
         /* MQTT NETWORK BROADCASTER & DATA COMPRESSOR                */
