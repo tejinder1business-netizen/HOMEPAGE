@@ -860,7 +860,7 @@
         }
 
         // =========================================================================================
-        // NEW HIVE-MQ NETWORKING ENGINE (Replaces old PieSocket WebSockets)
+        //  FREE MQTT POST OFFICE WEBSOCKETS BRAIN
         // =========================================================================================
         function initializeWebSocketConnection() {
             if (mqttClient && mqttClient.isConnected()) return;
@@ -909,6 +909,10 @@
             });
         }
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
         function broadcastPayloadToPeerDevices(payloadObject) {
             if (!mqttClient || !mqttClient.isConnected()) return;
             
@@ -927,6 +931,11 @@
             message.destinationName = "appwall/taxi/network";
             mqttClient.send(message);
         }
+
+        //==================================================================
+        //   INCOMING MESSAGE UNPACKAGING BRAIN
+        //==================================================================
+
 
         function handleRemoteMarkerInjection(data) {
             if (!isShiftActive || driverProfileMemory.isSuspended) return;
@@ -975,6 +984,11 @@
             }
         }
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function dispatchRemoteAudioNarration(category, payload, resolvedAddressStr) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return;
             let finalSpeechString = "";
@@ -999,12 +1013,22 @@
             }, 1500);
         }
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function openDriverMatchingPortal() {
             hideModals(); document.getElementById('match-ui-current-role').innerText = driverProfileMemory.role.toUpperCase();
             document.getElementById('match-ui-current-phone').innerText = driverProfileMemory.phoneNumber || "None Added (Update Profile Setup)";
             syncCompanyDropdownUIFields(); document.getElementById('match-company-target-select').value = driverProfileMemory.company;
             renderMatchingBoardEntries(); showModal('driver-matching-pop');
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function submitAvailabilityToMatchPool() {
             if (!driverProfileMemory.phoneNumber) { alert("PHONE NUMBER IS REQUIRED IN YOUR DRIVER PROFILE SYSTEM."); hideModals(); openFullProfileSettings(); return; }
@@ -1021,6 +1045,11 @@
             mockSharedMatchingPool.push(newCalendarItem); renderMatchingBoardEntries();
             alert(`SUCCESS: Availability logged!`);
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function renderMatchingBoardEntries() {
             const driversContainer = document.getElementById('matching-drivers-column-target'); const carsContainer = document.getElementById('matching-cars-column-target');
@@ -1047,6 +1076,11 @@
             if (carCount === 0) { carsContainer.innerHTML = `<div class="chat-empty-msg" style="padding-top:20px; font-size:0.75rem;">No Cars</div>`; }
         }
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function accessAdminControlPortal() {
             hideModals(); const challengeCode = prompt("ENTER CONFIDENTIAL ADMINISTRATIVE DISPATCH PASSCODE:");
             if (challengeCode === null) return;
@@ -1057,6 +1091,11 @@
                 showModal('admin-control-pop');
             } else { alert("ACCESS DENIED."); }
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function executeAdminSuspensionAction() {
             const verification = confirm(`CONFIRM ENFORCEMENT: Place driver "${driverProfileMemory.displayName}" on a suspension time out session immediately?`);
@@ -1075,6 +1114,11 @@
             document.getElementById('status-screen-btn').style.display = "none"; 
             document.getElementById('shift-complete-screen').style.display = 'flex';
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function openCautionSelectionFromMenu() { hideModals(); showModal('caution-type-pop'); }
         function openCamerasFromMenu() { hideModals(); showModal('camera-menu-pop'); }
@@ -1101,6 +1145,11 @@
         setInterval(() => { if (trackVehicleView && vehiclePos && !driverProfileMemory.isSuspended) { map.setView(vehiclePos, preferredZoomDepth); } }, 2000);
         map.on('dragstart', function() { if (!isShiftActive) return; trackVehicleView = false; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle"; btn.innerHTML = "MAP<br>FREE"; }); 
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function fetchAddressFromCoordinates(latlng, forcedCallback = null) {
             let distanceMoved = 0;
             if (lastGeocodedPos) { distanceMoved = latlng.distanceTo(lastGeocodedPos); } 
@@ -1122,6 +1171,11 @@
                 });
         } 
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function showModal(id) { if (!isShiftActive && id !== 'shift-scheduler-pop') return; document.getElementById('screen-overlay').style.display = 'block'; document.getElementById(id).style.display = 'block'; } 
         function hideModals() { if (!isShiftActive) return; document.getElementById('screen-overlay').style.display = 'none'; document.querySelectorAll('.driver-modal').forEach(m => m.style.display = 'none'); } 
         function handleRecenter() { if (!isShiftActive || driverProfileMemory.isSuspended) return; trackVehicleView = true; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle active-center"; btn.innerHTML = "MAP<br>LOCKED"; if (vehiclePos) { map.setView(vehiclePos, preferredZoomDepth); } } 
@@ -1130,6 +1184,11 @@
             audioMuted = !audioMuted; const btn = document.getElementById('mute-toggle-btn');
             if(audioMuted) { btn.className = "util-circle active-mute"; btn.innerHTML = "AUDIO<br>MUTED"; } else { btn.className = "util-circle"; btn.innerHTML = "AUDIO<br>ON"; }
         } 
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function dropFlagDirect(selectionValue) {
             if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
@@ -1150,6 +1209,11 @@
                 setTimeout(() => { map.removeLayer(flagMarker); }, 300000); 
             });
         } 
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function selectCautionType(type) { if (!isShiftActive) return; chosenCautionType = type; hideModals(); showModal('caution-dir-pop'); } 
         function dropCautionMarker(directionValue) {
@@ -1175,6 +1239,11 @@
             });
         } 
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function selectPoliceType(type) { if (!isShiftActive) return; chosenPoliceType = type.toLowerCase().trim(); hideModals(); showModal('police-dir-pop'); } 
         function dropPoliceMarker(directionValue) {
             if (!isShiftActive) return; hideModals(); if (!vehiclePos) return; 
@@ -1193,6 +1262,11 @@
             });
         } 
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function breakHouseNumbersIntoCouples(numberStr) {
             if (!numberStr || isNaN(numberStr)) return numberStr;
             if (numberStr.length === 4) {
@@ -1209,6 +1283,11 @@
             } 
             return numberStr;
         } 
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function dispatchAudioNarration(category, payload) {
             if (!isShiftActive || audioMuted || driverProfileMemory.isSuspended) return; 
@@ -1236,6 +1315,11 @@
             }, 1500);
         } 
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         function replayLastAudioNarration() {
             if (!isShiftActive || !lastSpokenSpeechString || driverProfileMemory.isSuspended) return;
             const clearHardwareBuffer = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(clearHardwareBuffer); 
@@ -1246,12 +1330,22 @@
             }, 200);
         }
 
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
         function submitDriverSuggestion() {
             if (!isShiftActive) return;
             const field = document.getElementById('driver-suggestion-text'); const note = field.value.trim();
             if (!note) { alert("Please enter a suggestion before submitting."); return; }
             field.value = ""; hideModals(); alert("Thank you! Your suggestion has been recorded.");
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function openChatLogHistoryMenu() { if (!isShiftActive) return; showModal('chat-log-pop'); switchChatLogTab(activeChatLogTab); }
         function switchChatLogTab(categoryTab) {
@@ -1261,6 +1355,11 @@
             document.getElementById('tab-btn-police').className = "chat-tab-btn" + (categoryTab === 'Police' ? " active-tab-police" : "");
             renderChatLogList();
         }
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function renderChatLogList() {
             const container = document.getElementById('chat-list-target'); container.innerHTML = "";
@@ -1304,6 +1403,11 @@
             });
         }
 
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
+
         async function maintainScreenWakeLock() { try { if ('wakeLock' in navigator) { wakeLockToken = await navigator.wakeLock.request('screen'); } } catch (err) {} } 
         window.addEventListener('load', maintainScreenWakeLock); 
         document.addEventListener('visibilitychange', async () => { if (wakeLockToken !== null && document.visibilityState === 'visible') { maintainScreenWakeLock(); } });
@@ -1318,6 +1422,11 @@
             // Reveal the Install button inside the Utility Menu
             document.getElementById('pwa-install-btn').style.display = 'block'; 
         });
+
+        //==================================================================
+        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //==================================================================
+
 
         function triggerPwaInstall() {
             if (deferredPrompt) {
