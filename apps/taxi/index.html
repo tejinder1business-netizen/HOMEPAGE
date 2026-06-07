@@ -1026,7 +1026,7 @@
         }
 
         //==================================================================
-        //   DRIVER MATCHING PROFILE PAGE BRAIN
+        //   DRIVER MATCHING GATEWAY FOR PROFILE PAGE BRAIN
         //==================================================================
 
 
@@ -1116,7 +1116,7 @@
         }
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   Navigation and UI Orchestration BRAIN
         //==================================================================
 
 
@@ -1146,7 +1146,7 @@
         map.on('dragstart', function() { if (!isShiftActive) return; trackVehicleView = false; const btn = document.getElementById('lock-center-btn'); btn.className = "util-circle"; btn.innerHTML = "MAP<br>FREE"; }); 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   REVERSE GPS  BRAIN
         //==================================================================
 
 
@@ -1172,7 +1172,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   UI Command & Control BRAIN
         //==================================================================
 
 
@@ -1186,7 +1186,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   FLAG DISPATCH BRAIN
         //==================================================================
 
 
@@ -1211,7 +1211,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   HAZARD DISPATCH BRAIN
         //==================================================================
 
 
@@ -1240,7 +1240,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   POLICE DISPATCH BRAIN
         //==================================================================
 
 
@@ -1263,7 +1263,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   Address-to-Voice Translator BRAIN
         //==================================================================
 
 
@@ -1285,7 +1285,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   Local Audio Narration BRAIN
         //==================================================================
 
 
@@ -1316,7 +1316,7 @@
         } 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   AUDIO REPEAT BRAIN BRAIN
         //==================================================================
 
 
@@ -1332,7 +1332,7 @@
 
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   DRIVER SUGGESTION BRAIN
         //==================================================================
 
         function submitDriverSuggestion() {
@@ -1343,10 +1343,9 @@
         }
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   LOGBOOK BRAIN
         //==================================================================
-
-
+        
         function openChatLogHistoryMenu() { if (!isShiftActive) return; showModal('chat-log-pop'); switchChatLogTab(activeChatLogTab); }
         function switchChatLogTab(categoryTab) {
             if (!isShiftActive) return; activeChatLogTab = categoryTab;
@@ -1354,10 +1353,13 @@
             document.getElementById('tab-btn-caution').className = "chat-tab-btn" + (categoryTab === 'Caution' ? " active-tab-caution" : "");
             document.getElementById('tab-btn-police').className = "chat-tab-btn" + (categoryTab === 'Police' ? " active-tab-police" : "");
             renderChatLogList();
-        }
+        } 
+
+
+        
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   LOGBOOK FLAGS POLICE AND HAZARD HISTORICAL RECORD BRAIN
         //==================================================================
 
 
@@ -1404,7 +1406,7 @@
         }
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //  KEEP SCREEN AWAKE BRAIN
         //==================================================================
 
 
@@ -1424,7 +1426,7 @@
         });
 
         //==================================================================
-        //   OUTGOING MESSAGE PACKAGING BRAIN
+        //   APP INSTALLER BRAIN
         //==================================================================
 
 
