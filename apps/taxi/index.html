@@ -529,12 +529,12 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+<script>
     /* ========================================================= */
-    /* CORE STATUS STATES & MEMORY                 */
+    /* CORE STATUS STATES & MEMORY                              */
     /* ========================================================= */
     
-    <script>
+    
         // Core Status States
         let vehiclePos = null;
         let lastGeocodedPos = null;
@@ -1017,7 +1017,7 @@
 
                 activeMarkersLog.push({ category: 'Flag', timestamp: Date.now(), latlng: incomingPos, textString: data.textString, emojiIcon: data.subType === 'Hotel Driveway' ? '🏨' : '🚶', subType: data.subType });
 
-                const navigationUrl = `https://www.google.com/maps/search/?api=1&query=${incomingPos.lat},${incomingPos.lng}`;
+                const navigationUrl = `http://googleusercontent.com/maps.google.com/${incomingPos.lat},${incomingPos.lng}`;
                 flagMarker.bindPopup(`
                     ${headerLabel} (REMOTE)<br>
                     <strong>Placement:</strong> ${data.subType}<br>
@@ -1258,7 +1258,7 @@
                 if (selectionValue === 'Hotel Driveway') { headerLabel = `<strong style="color:#5856d6;">HOTEL DISPATCH FLAG</strong>`; displayString = `Hotel Dispatch Flag waiting at ${completeAddress}`; }
 
                 activeMarkersLog.push({ category: 'Flag', timestamp: Date.now(), latlng: targetPos, textString: displayString, emojiIcon: selectionValue === 'Hotel Driveway' ? '🏨' : '🚶', subType: selectionValue });
-                const navigationUrl = `https://www.google.com/maps/search/?api=1&query=${targetPos.lat},${targetPos.lng}`;
+                const navigationUrl = `http://googleusercontent.com/maps.google.com/${targetPos.lat},${targetPos.lng}`;
                 flagMarker.bindPopup(` ${headerLabel}<br> <strong>Placement:</strong> ${selectionValue}<br> <span>Location: ${completeAddress}</span><br><br> <a href="${navigationUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a> `).openPopup(); 
 
                 broadcastPayloadToPeerDevices({ category: 'Flag', subType: selectionValue, coordinates: [targetPos.lat, targetPos.lng], address: completeAddress, textString: displayString });
@@ -1429,7 +1429,7 @@
                     
                     let customHistoryIcon; let popupContentHtml = "";
                     if (item.category === 'Flag') {
-                        const targetNavUrl = `https://www.google.com/maps/search/?api=1&query=${item.latlng.lat},${item.latlng.lng}`;
+                        const targetNavUrl = `http://googleusercontent.com/maps.google.com/${item.latlng.lat},${item.latlng.lng}`;
                         customHistoryIcon = L.divIcon({ className: 'red-man-icon', html: item.emojiIcon || '🚶', iconSize: [34, 34], iconAnchor: [17, 32] });
                         popupContentHtml = ` <strong style="color:#ff3b30;">HISTORICAL LOGGED FLAG</strong><br> <span>${item.textString}</span><br><br> <a href="${targetNavUrl}" target="_blank" style="display:block; text-align:center; background:#007aff; color:white; font-weight:bold; padding:8px 10px; border-radius:6px; text-decoration:none; margin-top:5px; text-transform:uppercase; font-size:11px;">Navigate to Flag</a> `;
                     } 
@@ -1492,14 +1492,6 @@
         }
     </script>
     <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker Registered'))
-                    .catch(err => console.log('Service Worker Error: ', err));
-            });
-        }
-    </script>
+   
 </body>
 </html>
