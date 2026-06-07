@@ -673,52 +673,40 @@
             initializeWebSocketConnection(); 
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const now = new Date();
-            now.setHours(now.getHours() + 8);
-            const defaultTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('shift-end-time-input').value = defaultTimeStr;
-            
-            syncCompanyDropdownUIFields();
-            
-            document.getElementById('driver-company-select').value = driverProfileMemory.company;
-            document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
-            document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
-            document.getElementById('driver-role-select').value = driverProfileMemory.role;
-            document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
-            document.getElementById('match-company-target-select').value = driverProfileMemory.company;
-            document.getElementById('match-calendar-date').value = new Date().toISOString().split('T')[0];
-            
-            if (driverProfileMemory.company && driverProfileMemory.carNumber && driverProfileMemory.displayName) {
-                isProfileDataAnchored = true;
-                toggleProfileModalFieldsDisplay(true);
-            } else {
-                isProfileDataAnchored = false;
-                toggleProfileModalFieldsDisplay(false);
-            }
-            
-            updateHudProfileTriggerButtonLabel();
-            
-            document.getElementById('screen-overlay').style.display = 'none';
-            document.getElementById('shift-scheduler-pop').style.display = 'none';
-
-            autoStartDefaultShift();
-        });
-
-        /* ========================================================= */
-        /* DYNAMIC UI BUTTON UPDATERS                                */
-        /* ========================================================= */
-
-        function updateHudProfileTriggerButtonLabel() {
-            const btn = document.getElementById('profile-hud-trigger-btn');
-            if (btn) {
-                if (driverProfileMemory.carNumber) {
-                    btn.innerHTML = `CAR<br>#${driverProfileMemory.carNumber}`;
-                } else {
-                    btn.innerHTML = `PROF<br>EDIT`;
-                }
-            }
-        }
+       window.addEventListener('DOMContentLoaded', () => {
+    // 1. Sync your dropdowns first
+    syncCompanyDropdownUIFields();
+    
+    // 2. Pre-fill the time picker with a default (e.g., 8 hours from now)
+    const now = new Date();
+    now.setHours(now.getHours() + 8);
+    const defaultTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('shift-end-time-input').value = defaultTimeStr;
+    
+    // 3. Load profile data if it exists
+    document.getElementById('driver-company-select').value = driverProfileMemory.company;
+    document.getElementById('driver-car-input').value = driverProfileMemory.carNumber;
+    document.getElementById('driver-name-input').value = driverProfileMemory.displayName;
+    document.getElementById('driver-role-select').value = driverProfileMemory.role;
+    document.getElementById('driver-phone-input').value = driverProfileMemory.phoneNumber;
+    
+    // 4. Determine if we need to show the full setup or just the shift time
+    if (driverProfileMemory.company && driverProfileMemory.carNumber && driverProfileMemory.displayName) {
+        isProfileDataAnchored = true;
+        toggleProfileModalFieldsDisplay(true);
+    } else {
+        isProfileDataAnchored = false;
+        toggleProfileModalFieldsDisplay(false);
+    }
+    
+    // 5. THE BIG CHANGE: Stop auto-starting. Just show the Shift Scheduler.
+    // Ensure all other modals are hidden
+    document.querySelectorAll('.driver-modal').forEach(m => m.style.display = 'none');
+    
+    // Force show the Shift Scheduler and the overlay
+    document.getElementById('screen-overlay').style.display = 'block';
+    document.getElementById('shift-scheduler-pop').style.display = 'block';
+});
 
         /* ========================================================= */
         /* PROFILE UI STATE TOGGLER                                  */
