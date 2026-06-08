@@ -1,18 +1,19 @@
 {
   "name": "Taxi Companion",
-  "short_name": "TC",
-  "start_url": "/index.html",
+  "short_name": "TaxiComp",
+  "start_url": "/apps/taxi/index.html",
   "display": "standalone",
-  "background_color": "#ff0000",
-  "theme_color": "#ff0000",
+  "scope": "/apps/taxi/",
+  "background_color": "#111111",
+  "theme_color": "#1c1c1e",
   "icons": [
     {
-      "src": "taxi-icon.png",
+      "src": "/apps/taxi/taxi-icon.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "taxi-icon.png",
+      "src": "/apps/taxi/taxi-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
