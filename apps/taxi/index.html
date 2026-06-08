@@ -1165,34 +1165,37 @@
        
 
 function autoStartDefaultShift() {
-    // 1. Calculate shift end (defaulting to 12 hours from now)
     const now = new Date();
     now.setHours(now.getHours() + 12);
     targetShiftEndTimestamp = now.getTime();
-    
-    // 2. Set status flags
     isShiftActive = true;
     driverProfileMemory.isSuspended = false;
 
-    // 3. Ensure a unique ID exists
     if (!driverProfileMemory.uid) {
         driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000);
     }
 
-    // 4. THE HEARTBEAT: Start the Watchdog check every 1000ms (1 second)
     if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
     shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
 
-    // 5. Initialize supporting services
     updateHudProfileTriggerButtonLabel();
     initializeWebSocketConnection(); 
 
-    // 6. Force UI to clear all overlays
+    // FORCE CLEAN UI: Ensure no modals are open
+    hideModals(); 
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Sync UI Fields
+    syncCompanyDropdownUIFields();
+    
+    // 2. Hide all modals immediately to prevent "stuck" screens
     document.getElementById('screen-overlay').style.display = 'none';
     document.getElementById('shift-scheduler-pop').style.display = 'none';
     
-    console.log("Shift started. Heartbeat active. End time: " + new Date(targetShiftEndTimestamp).toLocaleTimeString());
-}
+    // 3. Launch the shift and go straight to the map
+    autoStartDefaultShift();
+});
         //==================================================================
 
         //   DRIVER CAR NUMBER DISPLAY AT BOTTOM RIGHT CORNER BRAIN
@@ -1289,7 +1292,7 @@ function autoStartDefaultShift() {
 
             document.getElementById('profile-saved-identity-hud').style.display = 'none';
 
-            document.getElementById('shift-end-time-picker-section').style.display = 'block';
+            document.getElementById('shift-end-time-picker-section').style.display = 'none';
 
             const submitBtn = document.getElementById('profile-submit-action-btn');
 
@@ -1441,31 +1444,88 @@ function autoStartDefaultShift() {
 
 
 
-       function initializeDriverShiftTimer() {
-    const timeInputValue = document.getElementById('shift-end-time-input').value;
-    
-    if (!timeInputValue) {
-        alert("Please select a shift end time!");
-        return;
-    }
+        function initializeDriverShiftTimer() {
 
-    // Convert input time to a timestamp
-    const [hours, minutes] = timeInputValue.split(':').map(Number);
-    const now = new Date();
-    let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-    
-    // If the time is in the past, assume it's for tomorrow
-    if (targetDate <= now) { targetDate.setDate(targetDate.getDate() + 1); }
-    
-    targetShiftEndTimestamp = targetDate.getTime();
-    isShiftActive = true;
+            if (!isProfileDataAnchored) {
 
-    // DEBUG: This will confirm if the Brain actually set the timer
-    alert("Timer set for: " + targetDate.toLocaleTimeString() + "\nTimestamp: " + targetShiftEndTimestamp);
+                const companyVal = document.getElementById('driver-company-select').value.trim();
 
-    hideModals();
-    updateHudProfileTriggerButtonLabel();
-}
+                const carVal = document.getElementById('driver-car-input').value.trim();
+
+                const nameVal = document.getElementById('driver-name-input').value.trim();
+
+                const roleVal = document.getElementById('driver-role-select').value;
+
+                const phoneVal = document.getElementById('driver-phone-input').value.trim();
+
+                if (!companyVal || companyVal === "__ADD_NEW_COMPANY__" || !carVal || !nameVal) { alert("ALL PROFILE INFORMATION FIELDS ARE MANDATORY."); return; }
+
+                driverProfileMemory.company = companyVal; driverProfileMemory.carNumber = carVal;
+
+                driverProfileMemory.displayName = nameVal; driverProfileMemory.role = roleVal;
+
+                driverProfileMemory.phoneNumber = phoneVal; document.getElementById('match-company-target-select').value = companyVal;
+
+                isProfileDataAnchored = true;
+
+            }
+
+
+
+            const timeInputValue = document.getElementById('shift-end-time-input').value;
+
+            if (!timeInputValue) { alert("PLEASE SELECT A VALID SHIFT END TIME."); return; }
+
+            if (!driverProfileMemory.uid) { driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000); }
+
+
+
+            const [hours, minutes] = timeInputValue.split(':').map(Number);
+
+            const now = new Date();
+
+            let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
+
+            if (targetDate <= now) { targetDate.setDate(targetDate.getDate() + 1); }
+
+
+
+            targetShiftEndTimestamp = targetDate.getTime();
+
+            isShiftActive = true;
+
+            driverProfileMemory.isSuspended = false;
+
+
+
+            if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
+
+            shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
+
+
+
+            updateHudProfileTriggerButtonLabel();
+
+
+
+            if (vehicleMarker && vehiclePos) {
+
+                map.removeLayer(vehicleMarker);
+
+                vehicleMarker = L.marker(vehiclePos, { icon: generateDynamicTaxiIcon() }).addTo(map);
+
+            }
+
+
+
+            initializeWebSocketConnection();
+
+            document.getElementById('shift-scheduler-pop').style.display = 'none';
+
+            document.getElementById('screen-overlay').style.display = 'none';
+
+        }
+
 
 
         //==================================================================
@@ -1476,43 +1536,14 @@ function autoStartDefaultShift() {
 
 
 
-   //==================================================================
-// [ZONE: DRIVER SHIFT END ENFORCER BRAIN]
-//==================================================================
+        function checkShiftTimeExpirationStatus() {
 
-function checkShiftTimeExpirationStatus() {
-    // 1. If shift isn't active or no end time is set, stop checking.
-    if (!isShiftActive || !targetShiftEndTimestamp) return;
+            if (!isShiftActive || !targetShiftEndTimestamp) return;
 
-    // 2. The Check: If current time is past the end time, trigger the Executioner.
-    if (Date.now() >= targetShiftEndTimestamp) {
-        console.log("CRITICAL: Shift time reached. Executing auto-sign-off.");
-        shutDownActiveAppSession();
-    }
-}
+            if (Date.now() >= targetShiftEndTimestamp) { shutDownActiveAppSession(); }
 
-function shutDownActiveAppSession() {
-    // Stop the monitoring interval so it doesn't keep trying to shut down
-    if (shiftMonitoringInterval) {
-        clearInterval(shiftMonitoringInterval);
-        shiftMonitoringInterval = null;
-    }
+        }
 
-    // Reset app state
-    isShiftActive = false;
-    targetShiftEndTimestamp = null;
-
-    // UI Feedback: Show the driver they are done
-    alert("SHIFT COMPLETE: You have been signed off automatically.");
-    
-    // Perform any final cleanup (e.g., stopping MQTT)
-    if (typeof mqttClient !== 'undefined') {
-        mqttClient.disconnect();
-    }
-
-    // Redirect or reset UI to initial state
-    window.location.reload(); 
-}
 
 
         //==================================================================
