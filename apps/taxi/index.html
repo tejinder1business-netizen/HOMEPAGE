@@ -1536,14 +1536,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-        function checkShiftTimeExpirationStatus() {
+    function checkShiftTimeExpirationStatus() {
+    // 1. Safety check: Is the shift even active?
+    if (!isShiftActive || !targetShiftEndTimestamp) return;
 
-            if (!isShiftActive || !targetShiftEndTimestamp) return;
-
-            if (Date.now() >= targetShiftEndTimestamp) { shutDownActiveAppSession(); }
-
-        }
-
+    // 2. Comparison: Is the current time now equal to or past the end time?
+    if (Date.now() >= targetShiftEndTimestamp) {
+        console.log("Shift expired at: " + new Date(targetShiftEndTimestamp).toLocaleTimeString());
+        shutDownActiveAppSession();
+    }
+}
 
 
         //==================================================================
