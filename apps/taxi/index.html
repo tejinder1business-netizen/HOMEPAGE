@@ -56,6 +56,24 @@
 
         .action-btn { pointer-events: auto; width: 82px; height: 82px; border-radius: 50%; border: 4px solid #fff; color: white; font-weight: bold; font-size: 0.82rem; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 
+        /* Add this to your style block */
+#pwa-install-btn {
+    pointer-events: auto;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    color: white;
+    font-weight: bold;
+    font-size: 0.82rem;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
         .btn-flag { background: #ff3b30; }
 
         .btn-police { background: #007aff; }
@@ -324,13 +342,15 @@
 
     <!--===========================================================-->
 
-    <div class="top-actions">
-
-        <button class="action-btn btn-flag" onclick="showModal('flag-pop')">🔴<br><span>FLAG</span></button>
-
-        <button class="action-btn btn-police" onclick="showModal('police-pop')">👮<br><span>POLICE</span></button>
-
-    </div> 
+   <div class="top-actions">
+    <button class="action-btn btn-flag" onclick="showModal('flag-pop')">🔴<br><span>FLAG</span></button>
+    
+    <button id="pwa-install-btn" class="action-btn" style="display:none; background: #34c759; border-color: #fff;" onclick="triggerPwaInstall()">
+        GET<br><span>FREE APP</span>
+    </button>
+    
+    <button class="action-btn btn-police" onclick="showModal('police-pop')">👮<br><span>POLICE</span></button>
+</div>
 
     <!--===========================================================-->
 
@@ -2793,20 +2813,21 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // =========================================================================================
 
-        let deferredPrompt;
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-
-            e.preventDefault();
-
-            deferredPrompt = e;
-
-            // Reveal the Install button inside the Utility Menu
-
-            document.getElementById('pwa-install-btn').style.display = 'block'; 
-
-        });
-
+       let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // 1. Stop the browser from showing its default banner
+    e.preventDefault();
+    
+    // 2. Save the event for later
+    deferredPrompt = e;
+    
+    // 3. Reveal our new "GET FREE APP" button on the map
+    // We use 'flex' because your buttons are inside a flex-container
+    const installBtn = document.getElementById('pwa-install-btn');
+    if (installBtn) {
+        installBtn.style.display = 'flex'; 
+    }
+});
 
 
         //==================================================================
