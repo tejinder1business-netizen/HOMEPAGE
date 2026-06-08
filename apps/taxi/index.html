@@ -1479,15 +1479,42 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function checkShiftTimeExpirationStatus() {
-    // 1. Safety check: Is the shift even active?
+   //==================================================================
+// [ZONE: DRIVER SHIFT END ENFORCER BRAIN]
+//==================================================================
+
+function checkShiftTimeExpirationStatus() {
+    // 1. If shift isn't active or no end time is set, stop checking.
     if (!isShiftActive || !targetShiftEndTimestamp) return;
 
-    // 2. Comparison: Is the current time now equal to or past the end time?
+    // 2. The Check: If current time is past the end time, trigger the Executioner.
     if (Date.now() >= targetShiftEndTimestamp) {
-        console.log("Shift expired at: " + new Date(targetShiftEndTimestamp).toLocaleTimeString());
+        console.log("CRITICAL: Shift time reached. Executing auto-sign-off.");
         shutDownActiveAppSession();
     }
+}
+
+function shutDownActiveAppSession() {
+    // Stop the monitoring interval so it doesn't keep trying to shut down
+    if (shiftMonitoringInterval) {
+        clearInterval(shiftMonitoringInterval);
+        shiftMonitoringInterval = null;
+    }
+
+    // Reset app state
+    isShiftActive = false;
+    targetShiftEndTimestamp = null;
+
+    // UI Feedback: Show the driver they are done
+    alert("SHIFT COMPLETE: You have been signed off automatically.");
+    
+    // Perform any final cleanup (e.g., stopping MQTT)
+    if (typeof mqttClient !== 'undefined') {
+        mqttClient.disconnect();
+    }
+
+    // Redirect or reset UI to initial state
+    window.location.reload(); 
 }
 
 
