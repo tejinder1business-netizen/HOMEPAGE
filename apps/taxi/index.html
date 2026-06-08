@@ -1165,37 +1165,34 @@
        
 
 function autoStartDefaultShift() {
+    // 1. Calculate shift end (defaulting to 12 hours from now)
     const now = new Date();
     now.setHours(now.getHours() + 12);
     targetShiftEndTimestamp = now.getTime();
+    
+    // 2. Set status flags
     isShiftActive = true;
     driverProfileMemory.isSuspended = false;
 
+    // 3. Ensure a unique ID exists
     if (!driverProfileMemory.uid) {
         driverProfileMemory.uid = "DRV-" + Math.floor(100000 + Math.random() * 900000);
     }
 
+    // 4. THE HEARTBEAT: Start the Watchdog check every 1000ms (1 second)
     if (shiftMonitoringInterval) clearInterval(shiftMonitoringInterval);
     shiftMonitoringInterval = setInterval(checkShiftTimeExpirationStatus, 1000);
 
+    // 5. Initialize supporting services
     updateHudProfileTriggerButtonLabel();
     initializeWebSocketConnection(); 
 
-    // FORCE CLEAN UI: Ensure no modals are open
-    hideModals(); 
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    // 1. Sync UI Fields
-    syncCompanyDropdownUIFields();
-    
-    // 2. Hide all modals immediately to prevent "stuck" screens
+    // 6. Force UI to clear all overlays
     document.getElementById('screen-overlay').style.display = 'none';
     document.getElementById('shift-scheduler-pop').style.display = 'none';
     
-    // 3. Launch the shift and go straight to the map
-    autoStartDefaultShift();
-});
+    console.log("Shift started. Heartbeat active. End time: " + new Date(targetShiftEndTimestamp).toLocaleTimeString());
+}
         //==================================================================
 
         //   DRIVER CAR NUMBER DISPLAY AT BOTTOM RIGHT CORNER BRAIN
