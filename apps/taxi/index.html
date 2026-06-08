@@ -394,45 +394,96 @@
 
 
 
-  <div id="shift-scheduler-pop" class="driver-modal shift-modal-grid" style="display: block; visibility: visible;">
-    <span class="modal-title" id="profile-modal-main-title">Driver Profile Setup</span>
+    <div id="screen-overlay" class="modal-overlay" onclick="hideModals()"></div> 
 
-    <div id="profile-setup-fields-wrapper">
-        <label class="profile-field-label">1. What company do you drive for?</label>
-        <select id="driver-company-select" class="profile-select-field" style="background:#fff;" onchange="handleCompanySelectionFramework(this)">
-            <option value="Yellow Cab Company Private Limited">Yellow Cab Company Private Limited</option>
-            <option value="Black Top Cabs">Black Top Cabs</option>
-            <option value="Maclure's Cabs">Maclure's Cabs</option>
-            <option value="Vancouver Taxi">Vancouver Taxi</option>
-            <option value="__ADD_NEW_COMPANY__">[ + Add Custom Fleet Company ]</option>
-        </select>
 
-        <label class="profile-field-label">2. What is your car number?</label>
-        <input type="text" id="driver-car-input" class="profile-input-field" placeholder="e.g. 342">
 
-        <label class="profile-field-label">3. What name do you want to go by?</label>
-        <input type="text" id="driver-name-input" class="profile-input-field" placeholder="e.g. Jaswal">
+    <div id="shift-scheduler-pop" class="driver-modal shift-modal-grid">
 
-        <label class="profile-field-label">4. Your Vehicle Association Status?</label>
-        <select id="driver-role-select" class="profile-select-field">
-            <option value="Driver">I am a Driver (Looking for shifts/cars)</option>
-            <option value="Owner">I am the Car Owner (Looking for relief drivers)</option>
-        </select>
+        <span class="modal-title" id="profile-modal-main-title">Driver Profile Setup</span>
 
-        <label class="profile-field-label">5. Contact Phone Number (Optional)</label>
-        <input type="tel" id="driver-phone-input" class="profile-input-field" placeholder="e.g. 604-555-0199">
+        
+
+        <div id="profile-setup-fields-wrapper">
+
+            <label class="profile-field-label">1. What company do you drive for?</label>
+
+            <select id="driver-company-select" class="profile-select-field" style="background:#fff;" onchange="handleCompanySelectionFramework(this)">
+
+                <option value="Yellow Cab Company Private Limited">Yellow Cab Company Private Limited</option>
+
+                <option value="Black Top Cabs">Black Top Cabs</option>
+
+                <option value="Maclure's Cabs">Maclure's Cabs</option>
+
+                <option value="Vancouver Taxi">Vancouver Taxi</option>
+
+                <option value="__ADD_NEW_COMPANY__">[ + Add Custom Fleet Company ]</option>
+
+            </select>
+
+            
+
+            <label class="profile-field-label">2. What is your car number?</label>
+
+            <input type="text" id="driver-car-input" class="profile-input-field" placeholder="e.g. 342">
+
+            
+
+            <label class="profile-field-label">3. What name do you want to go by?</label>
+
+            <input type="text" id="driver-name-input" class="profile-input-field" placeholder="e.g. Jaswal">
+
+
+
+            <label class="profile-field-label">4. Your Vehicle Association Status?</label>
+
+            <select id="driver-role-select" class="profile-select-field">
+
+                <option value="Driver">I am a Driver (Looking for shifts/cars)</option>
+
+                <option value="Owner">I am the Car Owner (Looking for relief drivers)</option>
+
+            </select>
+
+
+
+            <label class="profile-field-label">5. Contact Phone Number (Optional)</label>
+
+            <input type="tel" id="driver-phone-input" class="profile-input-field" placeholder="e.g. 604-555-0199">
+
+        </div>
+
+        
+
+        <div id="profile-saved-identity-hud" style="display:none; background:#f2f2f7; padding:10px; border-radius:8px; border:2px dashed #8e8e93; margin-bottom:12px; font-size:0.88rem; font-weight:700; color:#1c1c1e; text-align:center;">
+
+            Active Identity Confirmed: <span id="hud-saved-name" style="color:#007aff;">---</span><br>
+
+            <span id="hud-saved-fleet" style="font-size:0.75rem; color:#636366;">---</span>
+
+            <button class="btn-close-cam" style="margin-top: 8px; padding: 6px; font-size: 0.8rem;" onclick="forceExpandProfileEditor()">Modify Profile Details</button>
+
+        </div>
+
+
+
+        <div id="shift-end-time-picker-section">
+
+            <label class="profile-field-label" style="margin-top: 6px; color: #48484a; text-align: center;">What time does your shift end?</label>
+
+            <input type="time" id="shift-end-time-input" class="shift-time-picker">
+
+        </div>
+
+        
+
+        <button id="profile-submit-action-btn" class="btn-confirm-shift" onclick="initializeDriverShiftTimer()">Go On Duty</button>
+
+        <button id="profile-close-action-btn" class="btn-close-cam" style="display: none; margin-top: 10px;" onclick="hideModals()">Close Settings</button>
+
     </div>
 
-    <div id="shift-end-time-picker-section" style="display: block !important; margin: 20px 0; border: 2px solid #007aff; padding: 15px; border-radius: 8px; background: #f0f7ff;">
-        <label class="profile-field-label" style="display:block; margin-bottom: 5px; color: #333; font-weight: bold;">What time does your shift end?</label>
-        <input type="time" id="shift-end-time-input" class="shift-time-picker" style="width: 100%; padding: 10px; font-size: 1.1rem;">
-    </div>
-
-    <div id="modal-footer-buttons" style="margin-top: 20px; display: block;">
-        <button id="profile-submit-action-btn" class="btn-confirm-shift" style="display: block !important; width: 100%; padding: 15px; background: #007aff; color: white; border: none; border-radius: 5px;" onclick="initializeDriverShiftTimer()">Go On Duty</button>
-        <button id="profile-close-action-btn" class="btn-close-cam" style="display: block !important; width: 100%; padding: 15px; margin-top: 10px; background: #ff3b30; color: white; border: none; border-radius: 5px;" onclick="hideModals()">Close Settings</button>
-    </div>
-</div>
     <!--============================================================================-->
 
 
@@ -933,7 +984,7 @@
 
             uid: "", company: "Yellow Cab Company Private Limited", carNumber: "342",
 
-            displayName: "Jaswal", isSuspended: false, role: "Driver", phoneNumber: ""
+            displayName: "Jaswell", isSuspended: false, role: "Driver", phoneNumber: ""
 
         };
 
