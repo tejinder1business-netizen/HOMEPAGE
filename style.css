@@ -1,24 +1,19 @@
-/* ... existing code ... /
+/* This controls the background for your entire website */
 body {
-margin: 0;
-padding: 0;
-/ Here is your new wall picture! */
-background-image: url('wall.jpg');
-
-/* Changed to fit the full wall onto the screen without zooming in */
-background-size: 100% 100%;
-background-repeat: no-repeat;
-background-position: center;
-background-attachment: fixed;
-
-background-color: #222; /* Fallback color just in case the image loads slowly */
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-
+    margin: 0;
+    padding: 0;
+    /* Here is your new wall picture! */
+    background-image: url('wall.jpg'); 
+    
+    /* Changed to fit the full wall onto the screen without zooming in */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    
+    background-color: #222; /* Fallback color just in case the image loads slowly */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-header {
-/* ... existing code ... */
 
 header {
     text-align: center;
@@ -34,3 +29,4 @@ h1 {
     /* Gives your main logo a nice glowing shadow so it stands out against the wall */
     text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
 }
+```
