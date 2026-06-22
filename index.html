@@ -12,7 +12,7 @@
         body {
             /* This forces the background to be white "grout" and hides the old bricks.jpg photo */
             background-image: none !important; 
-            background-color: #f0f0f0 !important; 
+            background-color: #e8e8e8 !important; /* Slightly darker grout for realism */
             margin: 0;
             padding: 0;
             font-family: sans-serif;
@@ -20,23 +20,23 @@
 
         .literal-wall {
             display: grid;
-            /* This creates columns of tiles that automatically wrap based on screen size */
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            /* The gap is the literal "grout" between the tiles */
-            gap: 12px;
-            padding: 12px;
+            /* Elongated bricks: wider width, shorter height */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            /* Thinner grout lines to look more realistic */
+            gap: 6px;
+            padding: 6px;
             /* Ensures the wall stretches all the way down the screen */
             min-height: 100vh;
             box-sizing: border-box;
         }
 
         .red-tile {
-            /* We use a gradient and shadows to make the code look like a physical 3D tile */
-            background-color: #B22222; /* Firebrick Red */
-            background-image: linear-gradient(135deg, #cc2929, #8b1c1c);
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.15), inset -3px -3px 8px rgba(0,0,0,0.5);
-            border-radius: 6px;
-            height: 140px; /* Makes them distinct squares/rectangles */
+            /* Deeper brick red with a tight shadow for a 3D physical look */
+            background-color: #A52A2A; 
+            background-image: linear-gradient(135deg, #b33939, #801515);
+            box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2), inset -2px -2px 5px rgba(0,0,0,0.4);
+            border-radius: 4px; /* Less rounded, more like a real tile */
+            height: 80px; /* Shorter to create that elongated rectangular brick look */
         }
 
         .app-tile {
@@ -45,8 +45,8 @@
             justify-content: center;
             align-items: center;
             text-decoration: none;
-            border-radius: 6px;
-            height: 140px;
+            border-radius: 4px;
+            height: 80px; /* Must match the red-tile height */
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
@@ -91,9 +91,9 @@
             color: #ffffff;
         }
 
-        /* Font sizing for the text inside the glowing tiles */
-        .tile-title { font-size: 1.5em; margin-bottom: 5px; font-weight: bold; text-align: center; }
-        .tile-sub { font-size: 0.85em; opacity: 0.85; font-weight: normal; }
+        /* Font sizing adjusted to fit inside the shorter, wider tiles */
+        .tile-title { font-size: 1.2em; margin-bottom: 2px; font-weight: bold; text-align: center; }
+        .tile-sub { font-size: 0.75em; opacity: 0.85; font-weight: normal; }
 
         .title-tile {
             grid-column: 1 / -1; /* This tells the title to stretch across the entire top row */
