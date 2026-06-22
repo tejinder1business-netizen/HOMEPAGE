@@ -6,7 +6,7 @@ body {
     background-image: url('wall.jpg'); 
     
     /* Set a specific size to "zoom out". Change 500px to 800px to zoom in, or 300px to zoom out more! */
-    background-size: 100px; 
+    background-size: 75px; 
     
     /* This tells the website to "tile" the smaller picture like wallpaper to fill the screen */
     background-repeat: repeat; 
@@ -18,17 +18,17 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ... existing code ... */
 header {
-    text-align: center;
-    padding: 50px 20px 20px 20px;
+text-align: center;
+padding: 50px 20px 20px 20px;
 }
 
 h1 {
-    color: white;
-    margin: 0;
-    font-size: 3em;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    /* Gives your main logo a nice glowing shadow so it stands out against the wall */
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
-}
+color: white;
+margin: 0 auto;
+display: inline-block; /* Makes the sign wrap closely around the text */
+padding: 20px 50px;
+font-size: 3em;
+text-transform: uppercase;
+letter-spacing: 4px;
