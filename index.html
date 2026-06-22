@@ -3,40 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppWall.ca | Welcome</title>
-    <!-- Links to your updated style.css to show the wall -->
+    <title>Free Apps | AppWall.ca</title>
+    <!-- Links to your main styles so it keeps the brick background and 3D sign -->
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        /* This invisible grid holds your buttons in the exact corners and sides you requested */
-        .wall-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Two columns (left and right) */
-            gap: 30px 20px; /* Tighter space to accommodate smaller buttons */
-            width: 100%;
-            max-width: 320px; /* Keeps the grid tight so it looks good on both phones and computers */
-            margin: 40px auto;
-            justify-items: center; 
-        }
-
-        /* This creates the perfect circle buttons */
-        .circle-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 85px; /* Smaller button size */
-            height: 85px; /* Smaller button size */
-            border: 2px solid;
-            border-radius: 50%; /* Makes it a circle */
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9em; /* Scaled down text */
-            line-height: 1.2;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
 
@@ -44,28 +13,41 @@
         <h1>AppWall.ca</h1>
     </header>
 
-    <main class="wall-grid">
+    <!-- Main Container: Dark tinted glass with a Cyan neon border to match the Free Apps button -->
+    <main style="max-width: 600px; margin: 30px auto; padding: 30px; background: rgba(0, 0, 0, 0.7); border: 2px solid #00FFFF; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,255,255,0.2); text-align: center; backdrop-filter: blur(6px);">
         
-        <!-- ROW 1: TOP CORNERS -->
-        <!-- Top Left: Free Apps (Cyan) -->
-        <a href="apps-list.html" class="circle-btn" style="color: #000000; border-color: #00FFFF; box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); background: #00FFFF;">Free<br>Apps</a>
+        <h2 style="color: #00FFFF; margin-top: 0; text-shadow: 0px 0px 10px rgba(0,255,255,0.6); font-size: 2.2em; text-transform: uppercase; letter-spacing: 2px;">Free Apps</h2>
         
-        <!-- Top Right: Paid Apps (Magenta) -->
-        <a href="#" class="circle-btn" style="color: #000000; border-color: #FF00FF; box-shadow: 0 0 20px rgba(255, 0, 255, 0.8); background: #FF00FF;">Paid<br>Apps</a>
+        <!-- ===================================================================== -->
+        <!-- APP CARD: Taxi Companion App -->
+        <!-- ===================================================================== -->
+        <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 15px; padding: 25px; margin-bottom: 20px; text-align: left;">
+            
+            <h3 style="color: #FFFFFF; font-size: 1.6em; margin: 0 0 10px 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">Taxi Companion App</h3>
+            
+            <p style="color: #E0E0E0; font-size: 1.15em; line-height: 1.5; margin-bottom: 25px; font-weight: bold;">
+                Real time flags and dispatch
+            </p>
+            
+            <div style="text-align: center;">
+                <a href="/apps/taxi/" target="_blank" style="display: inline-block; padding: 12px 35px; background-color: #00FFFF; color: #000000; text-decoration: none; font-size: 1.2em; font-weight: bold; border-radius: 30px; box-shadow: 0 0 20px rgba(0,255,255,0.6); text-transform: uppercase;">
+                    Download / Install
+                </a>
+            </div>
 
-        <!-- ROW 2: MIDDLE -->
-        <!-- Middle Left: Sandbox (Lime Green) -->
-        <a href="sandbox.html" class="circle-btn" style="color: #000000; border-color: #39FF14; box-shadow: 0 0 20px rgba(57, 255, 20, 0.8); background: #39FF14;">Sandbox</a>
-        
-        <!-- Middle Right: Empty Space (keeps Sandbox on the left side) -->
-        <div style="visibility: hidden;"></div> 
+        </div>
+        <!-- ===================================================================== -->
 
-        <!-- ROW 3: BOTTOM CORNERS -->
-        <!-- Bottom Left: FAQ (Yellow) -->
-        <a href="faq.html" class="circle-btn" style="color: #000000; border-color: #FFFF00; box-shadow: 0 0 20px rgba(255, 255, 0, 0.8); background: #FFFF00;">FAQ</a>
-        
-        <!-- Bottom Right: Mission (Neon Orange) -->
-        <a href="mission.html" class="circle-btn" style="color: #000000; border-color: #FF5F1F; box-shadow: 0 0 20px rgba(255, 95, 31, 0.8); background: #FF5F1F;">Mission</a>
+
+        <!-- You can copy and paste the entire App Card block above whenever you add more apps! -->
+
+
+        <!-- The Close/Back Button -->
+        <div style="margin-top: 30px;">
+            <a href="index.html" style="display: inline-block; padding: 10px 20px; background: none; border: none; color: #00FFFF; font-weight: bold; cursor: pointer; font-size: 1.1em; text-decoration: underline;">
+                &larr; Back to App Wall
+            </a>
+        </div>
 
     </main>
 
