@@ -3,42 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppWall.ca</title>
+    <title>AppWall.ca | The Wall of Apps</title>
+    
+    <!-- Links to your main styles so the brick wall background stays -->
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        /* The CSS Grid that builds the "Wall" */
+        .wall-grid {
+            display: grid;
+            /* This makes the grid responsive. It fits as many 160px tiles in a row as it can. */
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* The baseline look for all tiles (bricks) */
+        .tile {
+            background: rgba(0, 0, 0, 0.6); /* Dark translucent background so the text pops */
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 160px; /* Makes them look like chunky square tiles */
+            cursor: pointer;
+        }
+
+        /* The pop-out effect when someone hovers over or taps a tile */
+        .tile:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Free Apps - Bright Cyan */
+        .tile-free { 
+            border-color: #00FFFF; 
+        }
+        .tile-free .tile-title { color: #00FFFF; text-shadow: 0 0 8px rgba(0,255,255,0.4); }
+        .tile-free:hover { box-shadow: 0 0 20px rgba(0,255,255,0.3); }
+
+        /* Paid Apps - Hot Magenta */
+        .tile-paid { 
+            border-color: #FF00FF; 
+        }
+        .tile-paid .tile-title { color: #FF00FF; text-shadow: 0 0 8px rgba(255,0,255,0.4); }
+        .tile-paid:hover { box-shadow: 0 0 20px rgba(255,0,255,0.3); }
+
+        /* Sandbox - Electric Blue */
+        .tile-sandbox { 
+            border-color: #0066FF; 
+        }
+        .tile-sandbox .tile-title { color: #0066FF; text-shadow: 0 0 8px rgba(0,102,255,0.4); }
+        .tile-sandbox:hover { box-shadow: 0 0 20px rgba(0,102,255,0.3); }
+
+        /* Info Pages - Clean White */
+        .tile-info { 
+            border-color: #FFFFFF; 
+        }
+        .tile-info .tile-title { color: #FFFFFF; text-shadow: 0 0 8px rgba(255,255,255,0.4); }
+        .tile-info:hover { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        
+        /* Font sizing for the text inside the tiles */
+        .tile-title { font-size: 1.5em; margin-bottom: 10px; }
+        .tile-sub { font-size: 0.85em; opacity: 0.8; font-weight: normal; color: #ccc; }
+    </style>
 </head>
 <body>
-<!-- ======================================================================================================================== -->
 
-    <!-- THIS IS THE TOP TITLE OF THE WEBPAGE WHERE IT SAYS APPWALL.CA -->
-    
-<!--=========================================================================================================================-->
-    <header>
-        <h1>AppWall.ca</h1>
+    <header style="text-align: center; margin-top: 50px;">
+        <h1 style="font-size: 3.5em; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.8); margin-bottom: 5px;">AppWall.ca</h1>
+        <p style="color: #aaa; font-size: 1.2em; margin-top: 0;">Select a tile to begin</p>
     </header>
 
+    <main class="wall-grid">
+        
+        <!-- FREE APPS TILE -->
+        <a href="apps-list.html" target="_blank" class="tile tile-free">
+            <span class="tile-title">Free Apps</span>
+            <span class="tile-sub">Real-world tools</span>
+        </a>
 
-<!--===========================================================================================================================-->
+        <!-- PAID APPS TILE (Currently a placeholder) -->
+        <a href="#" class="tile tile-paid">
+            <span class="tile-title">Premium</span>
+            <span class="tile-sub">Coming Soon</span>
+        </a>
 
-                                       <!--  THSES ARE THE CLICKABLE BUTTONS ON THE PAGE -->
+        <!-- SANDBOX TILE -->
+        <a href="sandbox.html" target="_blank" class="tile tile-sandbox">
+            <span class="tile-title">Sandbox</span>
+            <span class="tile-sub">Beta Testing</span>
+        </a>
 
-<!--===========================================================================================================================-->
-    <main class="wall-grid" id="main-wall">
-        <div class="app-tile" style="background: #00FFFF;" onclick="window.open('apps-list.html', '_blank')">Free Apps</div>
-        <div class="app-tile" style="background: #FF00FF;" onclick="alert('Paid Apps Coming Soon!')">Paid Apps</div>
-        <div class="app-tile" style="background: #7FFF00;" onclick="location.href='sandbox.html'">Sandbox</div>
+        <!-- MISSION TILE -->
+        <a href="mission.html" target="_blank" class="tile tile-info">
+            <span class="tile-title">Mission</span>
+            <span class="tile-sub">Who we are</span>
+        </a>
+        
+        <!-- FAQ TILE -->
+        <a href="faq.html" target="_blank" class="tile tile-info">
+            <span class="tile-title">FAQ</span>
+            <span class="tile-sub">Questions answered</span>
+        </a>
+
     </main>
 
-<!--============================================================================================================================-->
-
-                                      <!-- THESE ARE THE BUTTONS THAT APPEAR AT THE BOTTOM OF THE WEBPAGE-->
-
-<!--============================================================================================================================-->
-
-   <nav class="footer-nav">
-        <a href="mission.html" target="_blank">Mission</a>
-        <a href="faq.html" target="_blank">FAQ</a>
-        <a href="mailto:support@appwall.ca" target="_blank">Support</a>
-    </nav>
 </body>
 </html>
