@@ -3,178 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppWall.ca | The Wall of Apps</title>
-    
-    <!-- We keep your stylesheet link, but we will override the background photo in the code below -->
+    <title>AppWall.ca | Welcome</title>
+    <!-- Links to your updated style.css to show the wall -->
     <link rel="stylesheet" href="style.css">
     
     <style>
-        body {
-            /* This forces the background to be white "grout" and hides the old bricks.jpg photo */
-            background-image: none !important; 
-            background-color: #e8e8e8 !important; /* Slightly darker grout for realism */
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-
-        .literal-wall {
+        /* This invisible grid holds your buttons in the exact corners and sides you requested */
+        .wall-grid {
             display: grid;
-            /* Elongated bricks: wider width, shorter height */
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            /* Thinner grout lines to look more realistic */
-            gap: 6px;
-            padding: 6px;
-            /* Ensures the wall stretches all the way down the screen */
-            min-height: 100vh;
-            box-sizing: border-box;
+            grid-template-columns: 1fr 1fr; /* Two columns (left and right) */
+            gap: 30px 20px; /* Tighter space to accommodate smaller buttons */
+            width: 100%;
+            max-width: 320px; /* Keeps the grid tight so it looks good on both phones and computers */
+            margin: 40px auto;
+            justify-items: center; 
         }
 
-        .red-tile {
-            /* Deeper brick red with a tight shadow for a 3D physical look */
-            background-color: #A52A2A; 
-            background-image: linear-gradient(135deg, #b33939, #801515);
-            box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2), inset -2px -2px 5px rgba(0,0,0,0.4);
-            border-radius: 4px; /* Less rounded, more like a real tile */
-            height: 80px; /* Shorter to create that elongated rectangular brick look */
-        }
-
-        .app-tile {
+        /* This creates the perfect circle buttons */
+        .circle-btn {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-decoration: none;
-            border-radius: 4px;
-            height: 80px; /* Must match the red-tile height */
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        /* The hover effect makes the app tile "pop" out of the wall */
-        .app-tile:hover {
-            transform: scale(1.05);
-            z-index: 10;
-        }
-
-        
-        /* Free Apps - Bright Cyan */
-        .tile-free {
-            background-color: #00FFFF;
-            background-image: linear-gradient(135deg, #00FFFF, #00b3b3);
-            box-shadow: 0 0 25px rgba(0,255,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.8);
-            color: #000000;
-        }
-
-        /* Paid Apps - Hot Magenta */
-        .tile-paid {
-            background-color: #FF00FF;
-            background-image: linear-gradient(135deg, #FF00FF, #b300b3);
-            box-shadow: 0 0 25px rgba(255,0,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.8);
-            color: #ffffff;
-        }
-
-        /* Sandbox - Electric Blue */
-        .tile-sandbox {
-            background-color: #0066FF;
-            background-image: linear-gradient(135deg, #0066FF, #0044b3);
-            box-shadow: 0 0 25px rgba(0,102,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.6);
-            color: #ffffff;
-        }
-
-        /* Info Pages - Dark Charcoal to contrast the red */
-        .tile-info {
-            background-color: #333333;
-            background-image: linear-gradient(135deg, #444, #111);
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), inset -3px -3px 8px rgba(0,0,0,0.8);
-            color: #ffffff;
-        }
-
-        /* Font sizing adjusted to fit inside the shorter, wider tiles */
-        .tile-title { font-size: 1.2em; margin-bottom: 2px; font-weight: bold; text-align: center; }
-        .tile-sub { font-size: 0.75em; opacity: 0.85; font-weight: normal; }
-
-        .title-tile {
-            grid-column: 1 / -1; /* This tells the title to stretch across the entire top row */
-            background: transparent;
-            text-align: center;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
-        }
-        .title-tile h1 {
-            margin: 0;
-            font-size: 3.5em;
-            color: #222; /* Dark text against the white grout */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            letter-spacing: 2px;
+            width: 85px; /* Smaller button size */
+            height: 85px; /* Smaller button size */
+            border: 2px solid;
+            border-radius: 50%; /* Makes it a circle */
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em; /* Scaled down text */
+            line-height: 1.2;
+            padding: 5px;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <main class="literal-wall">
+    <header>
+        <h1>AppWall.ca</h1>
+    </header>
 
-        <!-- Title Section -->
-        <div class="title-tile">
-            <h1>AppWall.ca</h1>
-            <p style="color: #666; margin-top: 5px; font-weight: bold;">SELECT A TILE</p>
-        </div>
+    <main class="wall-grid">
+        
+        <!-- ROW 1: TOP CORNERS -->
+        <!-- Top Left: Free Apps (Cyan) -->
+        <a href="apps-list.html" class="circle-btn" style="color: #000000; border-color: #00FFFF; box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); background: #00FFFF;">Free<br>Apps</a>
+        
+        <!-- Top Right: Paid Apps (Magenta) -->
+        <a href="#" class="circle-btn" style="color: #000000; border-color: #FF00FF; box-shadow: 0 0 20px rgba(255, 0, 255, 0.8); background: #FF00FF;">Paid<br>Apps</a>
 
-        <!-- ROW 1: Filler red tiles to build the wall -->
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
+        <!-- ROW 2: MIDDLE -->
+        <!-- Middle Left: Sandbox (Lime Green) -->
+        <a href="sandbox.html" class="circle-btn" style="color: #000000; border-color: #39FF14; box-shadow: 0 0 20px rgba(57, 255, 20, 0.8); background: #39FF14;">Sandbox</a>
+        
+        <!-- Middle Right: Empty Space (keeps Sandbox on the left side) -->
+        <div style="visibility: hidden;"></div> 
 
-        <!-- ROW 2: We hide the glowing buttons inside the red tiles -->
-        <div class="red-tile"></div>
-        <a href="apps-list.html" class="app-tile tile-free">
-            <span class="tile-title">Free Apps</span>
-            <span class="tile-sub">Enter Here</span>
-        </a>
-        <div class="red-tile"></div>
-        <a href="#" class="app-tile tile-paid">
-            <span class="tile-title">Premium</span>
-            <span class="tile-sub">Coming Soon</span>
-        </a>
-        <div class="red-tile"></div>
-
-        <!-- ROW 3: More filler bricks and the Sandbox button -->
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <a href="sandbox.html" class="app-tile tile-sandbox">
-            <span class="tile-title">Sandbox</span>
-            <span class="tile-sub">Beta Tests</span>
-        </a>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-
-        <!-- ROW 4: Info pages -->
-        <div class="red-tile"></div>
-        <a href="mission.html" class="app-tile tile-info">
-            <span class="tile-title">Mission</span>
-        </a>
-        <div class="red-tile"></div>
-        <a href="faq.html" class="app-tile tile-info">
-            <span class="tile-title">FAQ</span>
-        </a>
-        <div class="red-tile"></div>
-
-        <!-- Extra filler tiles to ensure the screen is filled with bricks on large desktop monitors -->
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
-        <div class="red-tile"></div>
+        <!-- ROW 3: BOTTOM CORNERS -->
+        <!-- Bottom Left: FAQ (Yellow) -->
+        <a href="faq.html" class="circle-btn" style="color: #000000; border-color: #FFFF00; box-shadow: 0 0 20px rgba(255, 255, 0, 0.8); background: #FFFF00;">FAQ</a>
+        
+        <!-- Bottom Right: Mission (Neon Orange) -->
+        <a href="mission.html" class="circle-btn" style="color: #000000; border-color: #FF5F1F; box-shadow: 0 0 20px rgba(255, 95, 31, 0.8); background: #FF5F1F;">Mission</a>
 
     </main>
 
