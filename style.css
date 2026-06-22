@@ -6,7 +6,7 @@ body {
     background-image: url('wall.jpg'); 
     
     /* Set a specific size to "zoom out". Change 500px to 800px to zoom in, or 300px to zoom out more! */
-    background-size: 75px; 
+    background-size: 500px; 
     
     /* This tells the website to "tile" the smaller picture like wallpaper to fill the screen */
     background-repeat: repeat; 
@@ -18,25 +18,25 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ... existing code ... */
-/* ... existing code ... */
 header {
     text-align: center;
-    padding: 50px 20px 20px 20px;
+    padding: 50px 10px 20px 10px;
 }
 
 h1 {
-    color: white;
+    color: #00FFFF; /* Solid fluorescent cyan */
     margin: 0 auto;
     display: inline-block; /* Makes the sign wrap closely around the text */
-    padding: 20px 50px;
-    font-size: 3em;
+    padding: 15px 30px; /* Reduced padding to fit better on mobile screens */
+    font-size: 2.2em; /* Smaller font size to prevent cutting off */
     text-transform: uppercase;
-    letter-spacing: 4px;
-    background-color: rgba(0, 0, 0, 0.6); /* Dark tinted glass */
-    border: 2px solid rgba(255, 255, 255, 0.2); /* Subtle metallic rim */
+    letter-spacing: 2px; /* Tighter letter spacing */
+    max-width: 90vw; /* Safety rule: Sign can never be wider than 90% of the screen */
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark tinted glass */
+    border: 2px solid rgba(0, 255, 255, 0.3); /* Cyan metallic rim */
     border-radius: 15px; /* Rounded corners for the sign */
     backdrop-filter: blur(6px); /* Blurs the bricks strictly behind the sign */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.1); /* 3D depth */
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Neon text glow */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 255, 255, 0.1); /* 3D depth */
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.8); /* Neon text glow */
 }
