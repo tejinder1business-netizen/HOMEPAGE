@@ -11,49 +11,47 @@
         .form-container {
             max-width: 500px;
             margin: 30px auto;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.7); /* Tinted glass effect */
-            border: 2px solid #39FF14; /* Neon Lime Green border */
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(57, 255, 20, 0.2);
+            padding: 20px;
+            background: transparent; /* Removed the dark box so the wall shows through */
             text-align: center;
-            backdrop-filter: blur(6px);
         }
 
         .form-title {
             color: #39FF14;
             margin-top: 0;
-            text-shadow: 0px 0px 10px rgba(57, 255, 20, 0.6);
-            font-size: 2.2em;
+            text-shadow: 2px 2px 5px #000000, 0px 0px 20px rgba(57, 255, 20, 1); /* Heavy drop shadow so it pops off the wall */
+            font-size: 2.5em;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
         .form-subtitle {
-            color: #E0E0E0;
-            font-size: 1.1em;
+            color: #FFFFFF;
+            font-size: 1.2em;
             line-height: 1.5;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             font-weight: bold;
+            text-shadow: 2px 2px 4px #000000, 0px 0px 10px #000000, 0px 0px 20px #000000; /* Heavy drop shadow */
         }
 
         .neon-input {
             width: 100%;
             padding: 15px;
             margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(57, 255, 20, 0.5);
+            background: rgba(0, 0, 0, 0.7); /* Slightly dark background just for the typing areas */
+            border: 2px solid #39FF14;
             border-radius: 10px;
             color: #FFFFFF;
             font-size: 1.1em;
             box-sizing: border-box;
             font-family: inherit;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
         }
 
         .neon-input:focus {
             outline: none;
             border-color: #39FF14;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.8);
         }
 
         .neon-submit {
@@ -81,7 +79,7 @@
             color: #39FF14;
             font-size: 1.3em;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+            text-shadow: 2px 2px 5px #000000, 0px 0px 15px rgba(57, 255, 20, 1);
             margin-top: 20px;
         }
     </style>
@@ -115,7 +113,7 @@
 
         <!-- The Back Button -->
         <div style="margin-top: 30px;">
-            <a href="index.html" style="display: inline-block; padding: 10px 20px; background: none; border: none; color: #39FF14; font-weight: bold; font-size: 1.1em; text-decoration: underline;">
+            <a href="index.html" style="display: inline-block; padding: 10px 20px; background: rgba(0, 0, 0, 0.6); border: 1px solid #39FF14; border-radius: 8px; color: #39FF14; font-weight: bold; font-size: 1.1em; text-decoration: none; text-shadow: 0 0 5px rgba(57, 255, 20, 0.8);">
                 &larr; Back to App Wall
             </a>
         </div>
