@@ -1,50 +1,30 @@
-/* BACKGROUND: Fixed brick wall */
+/* This controls the background for your entire website */
 body {
-    background-image: url('bricks.jpg');
-    background-size: cover;
-    background-attachment: fixed;
     margin: 0;
-    font-family: sans-serif;
-    color: white;
+    padding: 0;
+    /* Here is your new wall picture! */
+    background-image: url('wall.jpg'); 
+    
+    /* These three lines make sure the picture fits perfectly on any screen */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    
+    background-color: #222; /* Fallback color just in case the image loads slowly */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
     text-align: center;
+    padding: 50px 20px 20px 20px;
 }
 
-/* THE WALL: Responsive Grid */
-.wall-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 25px;
-    padding: 40px;
-    max-width: 800px;
-    margin: auto;
-}
-
-/* APP TILES: The 3D hanging look */
-.app-tile {
-    height: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: black;
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.app-tile:hover {
-    transform: scale(1.05);
-}
-
-/* FOOTER MENU */
-.footer-nav {
-    margin-top: 50px;
-    padding: 20px;
-}
-.footer-nav a {
+h1 {
     color: white;
-    margin: 0 15px;
-    text-decoration: none;
-    font-size: 0.9em;
+    margin: 0;
+    font-size: 3em;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    /* Gives your main logo a nice glowing shadow so it stands out against the wall */
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
 }
