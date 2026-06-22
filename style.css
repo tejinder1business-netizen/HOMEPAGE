@@ -19,16 +19,24 @@ body {
 }
 
 /* ... existing code ... */
+/* ... existing code ... */
 header {
-text-align: center;
-padding: 50px 20px 20px 20px;
+    text-align: center;
+    padding: 50px 20px 20px 20px;
 }
 
 h1 {
-color: white;
-margin: 0 auto;
-display: inline-block; /* Makes the sign wrap closely around the text */
-padding: 20px 50px;
-font-size: 3em;
-text-transform: uppercase;
-letter-spacing: 4px;
+    color: white;
+    margin: 0 auto;
+    display: inline-block; /* Makes the sign wrap closely around the text */
+    padding: 20px 50px;
+    font-size: 3em;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark tinted glass */
+    border: 2px solid rgba(255, 255, 255, 0.2); /* Subtle metallic rim */
+    border-radius: 15px; /* Rounded corners for the sign */
+    backdrop-filter: blur(6px); /* Blurs the bricks strictly behind the sign */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.1); /* 3D depth */
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Neon text glow */
+}
