@@ -5,119 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AppWall.ca | The Wall of Apps</title>
     
-    <!-- Links to your main styles so the brick wall background stays -->
+    <!-- We keep your stylesheet link, but we will override the background photo in the code below -->
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* The CSS Grid that builds the "Wall" */
-        .wall-grid {
-            display: grid;
-            /* This makes the grid responsive. It fits as many 160px tiles in a row as it can. */
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
+        body {
+            /* This forces the background to be white "grout" and hides the old bricks.jpg photo */
+            background-image: none !important; 
+            background-color: #f0f0f0 !important; 
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
         }
 
-        /* The baseline look for all tiles (bricks) */
-        .tile {
-            background: rgba(0, 0, 0, 0.6); /* Dark translucent background so the text pops */
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 30px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        .literal-wall {
+            display: grid;
+            /* This creates columns of tiles that automatically wrap based on screen size */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            /* The gap is the literal "grout" between the tiles */
+            gap: 12px;
+            padding: 12px;
+            /* Ensures the wall stretches all the way down the screen */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .red-tile {
+            /* We use a gradient and shadows to make the code look like a physical 3D tile */
+            background-color: #B22222; /* Firebrick Red */
+            background-image: linear-gradient(135deg, #cc2929, #8b1c1c);
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.15), inset -3px -3px 8px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            height: 140px; /* Makes them distinct squares/rectangles */
+        }
+
+        .app-tile {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 160px; /* Makes them look like chunky square tiles */
+            text-decoration: none;
+            border-radius: 6px;
+            height: 140px;
+            transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
 
-        /* The pop-out effect when someone hovers over or taps a tile */
-        .tile:hover {
-            transform: translateY(-5px) scale(1.05);
-            background: rgba(0, 0, 0, 0.8);
+        /* The hover effect makes the app tile "pop" out of the wall */
+        .app-tile:hover {
+            transform: scale(1.05);
+            z-index: 10;
         }
 
+        
         /* Free Apps - Bright Cyan */
-        .tile-free { 
-            border-color: #00FFFF; 
+        .tile-free {
+            background-color: #00FFFF;
+            background-image: linear-gradient(135deg, #00FFFF, #00b3b3);
+            box-shadow: 0 0 25px rgba(0,255,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.8);
+            color: #000000;
         }
-        .tile-free .tile-title { color: #00FFFF; text-shadow: 0 0 8px rgba(0,255,255,0.4); }
-        .tile-free:hover { box-shadow: 0 0 20px rgba(0,255,255,0.3); }
 
         /* Paid Apps - Hot Magenta */
-        .tile-paid { 
-            border-color: #FF00FF; 
+        .tile-paid {
+            background-color: #FF00FF;
+            background-image: linear-gradient(135deg, #FF00FF, #b300b3);
+            box-shadow: 0 0 25px rgba(255,0,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.8);
+            color: #ffffff;
         }
-        .tile-paid .tile-title { color: #FF00FF; text-shadow: 0 0 8px rgba(255,0,255,0.4); }
-        .tile-paid:hover { box-shadow: 0 0 20px rgba(255,0,255,0.3); }
 
         /* Sandbox - Electric Blue */
-        .tile-sandbox { 
-            border-color: #0066FF; 
+        .tile-sandbox {
+            background-color: #0066FF;
+            background-image: linear-gradient(135deg, #0066FF, #0044b3);
+            box-shadow: 0 0 25px rgba(0,102,255,0.6), inset 2px 2px 5px rgba(255,255,255,0.6);
+            color: #ffffff;
         }
-        .tile-sandbox .tile-title { color: #0066FF; text-shadow: 0 0 8px rgba(0,102,255,0.4); }
-        .tile-sandbox:hover { box-shadow: 0 0 20px rgba(0,102,255,0.3); }
 
-        /* Info Pages - Clean White */
-        .tile-info { 
-            border-color: #FFFFFF; 
+        /* Info Pages - Dark Charcoal to contrast the red */
+        .tile-info {
+            background-color: #333333;
+            background-image: linear-gradient(135deg, #444, #111);
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), inset -3px -3px 8px rgba(0,0,0,0.8);
+            color: #ffffff;
         }
-        .tile-info .tile-title { color: #FFFFFF; text-shadow: 0 0 8px rgba(255,255,255,0.4); }
-        .tile-info:hover { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
-        
-        /* Font sizing for the text inside the tiles */
-        .tile-title { font-size: 1.5em; margin-bottom: 10px; }
-        .tile-sub { font-size: 0.85em; opacity: 0.8; font-weight: normal; color: #ccc; }
+
+        /* Font sizing for the text inside the glowing tiles */
+        .tile-title { font-size: 1.5em; margin-bottom: 5px; font-weight: bold; text-align: center; }
+        .tile-sub { font-size: 0.85em; opacity: 0.85; font-weight: normal; }
+
+        .title-tile {
+            grid-column: 1 / -1; /* This tells the title to stretch across the entire top row */
+            background: transparent;
+            text-align: center;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .title-tile h1 {
+            margin: 0;
+            font-size: 3.5em;
+            color: #222; /* Dark text against the white grout */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
 
-    <header style="text-align: center; margin-top: 50px;">
-        <h1 style="font-size: 3.5em; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.8); margin-bottom: 5px;">AppWall.ca</h1>
-        <p style="color: #aaa; font-size: 1.2em; margin-top: 0;">Select a tile to begin</p>
-    </header>
+    <main class="literal-wall">
 
-    <main class="wall-grid">
-        
-        <!-- FREE APPS TILE -->
-        <a href="apps-list.html" target="_blank" class="tile tile-free">
+        <!-- Title Section -->
+        <div class="title-tile">
+            <h1>AppWall.ca</h1>
+            <p style="color: #666; margin-top: 5px; font-weight: bold;">SELECT A TILE</p>
+        </div>
+
+        <!-- ROW 1: Filler red tiles to build the wall -->
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+
+        <!-- ROW 2: We hide the glowing buttons inside the red tiles -->
+        <div class="red-tile"></div>
+        <a href="apps-list.html" class="app-tile tile-free">
             <span class="tile-title">Free Apps</span>
-            <span class="tile-sub">Real-world tools</span>
+            <span class="tile-sub">Enter Here</span>
         </a>
-
-        <!-- PAID APPS TILE (Currently a placeholder) -->
-        <a href="#" class="tile tile-paid">
+        <div class="red-tile"></div>
+        <a href="#" class="app-tile tile-paid">
             <span class="tile-title">Premium</span>
             <span class="tile-sub">Coming Soon</span>
         </a>
+        <div class="red-tile"></div>
 
-        <!-- SANDBOX TILE -->
-        <a href="sandbox.html" target="_blank" class="tile tile-sandbox">
+        <!-- ROW 3: More filler bricks and the Sandbox button -->
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <a href="sandbox.html" class="app-tile tile-sandbox">
             <span class="tile-title">Sandbox</span>
-            <span class="tile-sub">Beta Testing</span>
+            <span class="tile-sub">Beta Tests</span>
         </a>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
 
-        <!-- MISSION TILE -->
-        <a href="mission.html" target="_blank" class="tile tile-info">
+        <!-- ROW 4: Info pages -->
+        <div class="red-tile"></div>
+        <a href="mission.html" class="app-tile tile-info">
             <span class="tile-title">Mission</span>
-            <span class="tile-sub">Who we are</span>
         </a>
-        
-        <!-- FAQ TILE -->
-        <a href="faq.html" target="_blank" class="tile tile-info">
+        <div class="red-tile"></div>
+        <a href="faq.html" class="app-tile tile-info">
             <span class="tile-title">FAQ</span>
-            <span class="tile-sub">Questions answered</span>
         </a>
+        <div class="red-tile"></div>
+
+        <!-- Extra filler tiles to ensure the screen is filled with bricks on large desktop monitors -->
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
+        <div class="red-tile"></div>
 
     </main>
 
