@@ -6,7 +6,7 @@ body {
     background-image: url('wall.jpg'); 
     
     /* Set a specific size to "zoom out". Change 500px to 800px to zoom in, or 300px to zoom out more! */
-    background-size: 500px; 
+    background-size: 300px; 
     
     /* This tells the website to "tile" the smaller picture like wallpaper to fill the screen */
     background-repeat: repeat; 
