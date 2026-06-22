@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestion Box | AppWall.ca</title>
+    <!-- Links to your main styles for the wall and header -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7); /* Tinted glass effect */
+            border: 2px solid #39FF14; /* Neon Lime Green border */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(57, 255, 20, 0.2);
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .form-title {
+            color: #39FF14;
+            margin-top: 0;
+            text-shadow: 0px 0px 10px rgba(57, 255, 20, 0.6);
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-subtitle {
+            color: #E0E0E0;
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .neon-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 10px;
+            color: #FFFFFF;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .neon-input:focus {
+            outline: none;
+            border-color: #39FF14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+        }
+
+        .neon-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: #39FF14;
+            color: #000000;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .neon-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.8);
+        }
+
+        .success-message {
+            display: none;
+            color: #39FF14;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>AppWall.ca</h1>
+    </header>
+
+    <main class="form-container">
+        
+        <h2 class="form-title">Suggestion Box</h2>
+        <p class="form-subtitle">Have an idea for a new app? Found a bug? Let us know!</p>
+        
+        <form id="suggestionForm">
+            <!-- Email Input -->
+            <input type="email" id="userEmail" class="neon-input" placeholder="Your Email Address" required>
+            
+            <!-- Message Input -->
+            <textarea id="userMessage" class="neon-input" rows="5" placeholder="Type your suggestion here..." required></textarea>
+            
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="neon-submit">Send Suggestion</button>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMsg" class="success-message">
+            Thank you! Your suggestion has been sent.
+        </div>
+
+        <!-- The Back Button -->
+        <div style="margin-top: 30px;">
+            <a href="index.html" style="display: inline-block; padding: 10px 20px; background: none; border: none; color: #39FF14; font-weight: bold; font-size: 1.1em; text-decoration: underline;">
+                &larr; Back to App Wall
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        document.getElementById('suggestionForm').addEventListener('submit', function(event) {
+            // Prevent the page from reloading
+            event.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const form = document.getElementById('suggestionForm');
+            const success = document.getElementById('successMsg');
+
+            // Change button text to simulate loading
+            btn.innerText = 'Sending...';
+            btn.style.opacity = '0.7';
+
+            // Simulate a 1.5 second delay, then show success message
+            setTimeout(function() {
+                form.style.display = 'none'; // Hide the form
+                success.style.display = 'block'; // Show "Thank you"
+            }, 1500);
+        });
+    </script>
+
+</body>
+</html>
