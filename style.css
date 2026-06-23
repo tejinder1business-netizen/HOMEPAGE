@@ -24,19 +24,29 @@ header {
 }
 
 h1 {
-    color: #00FFFF; /* Solid fluorescent cyan */
-    margin: 0 auto;
-    display: inline-block; /* Makes the sign wrap closely around the text */
-    padding: 15px 30px; /* Reduced padding to fit better on mobile screens */
-    font-size: 2.2em; /* Smaller font size to prevent cutting off */
-    text-transform: uppercase;
-    letter-spacing: 2px; /* Tighter letter spacing */
-    max-width: 90vw; /* Safety rule: Sign can never be wider than 90% of the screen */
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.7); /* Dark tinted glass */
-    border: 2px solid rgba(0, 255, 255, 0.3); /* Cyan metallic rim */
-    border-radius: 15px; /* Rounded corners for the sign */
-    backdrop-filter: blur(6px); /* Blurs the bricks strictly behind the sign */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 255, 255, 0.1); /* 3D depth */
-    text-shadow: 0 0 15px rgba(0, 255, 255, 0.8); /* Neon text glow */
+color: #00FFFF; /* Solid fluorescent cyan */
+margin: 0 auto;
+display: inline-block;
+padding: 15px 10px;
+font-size: 2.2em;
+text-transform: uppercase;
+letter-spacing: 2px;
+max-width: 90vw;
+box-sizing: border-box;
+
+/* Removed the background box, borders, and backdrop-filter! */
+background: transparent;
+border: none;
+
+/* NEW: 3D extruded letters hanging in the air with a heavy shadow */
+text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.8), /* Glowing front face */
+    1px 1px 0 #005555,               /* 3D side edge layer 1 */
+    2px 2px 0 #004444,               /* 3D side edge layer 2 */
+    3px 3px 0 #003333,               /* 3D side edge layer 3 */
+    4px 4px 0 #002222,               /* 3D side edge layer 4 */
+    5px 5px 0 #001111,               /* 3D side edge layer 5 */
+    10px 10px 25px rgba(0, 0, 0, 1); /* Heavy drop shadow hitting the wall */
+
+
 }
